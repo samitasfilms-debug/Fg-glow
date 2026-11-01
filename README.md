@@ -3,7 +3,13 @@
 React + Vite + TypeScript + Tailwind CSS v4 + Framer Motion, bilingual French / Arabic (RTL).
 Backend (Phase 05): Supabase (PostgreSQL, Auth, Storage, Edge Functions). Hosting: Vercel.
 
-## Status — Phase 01 (foundation) ✅
+## Status
+- Phase 01 (foundation) ✅
+- Booking system ✅ code + automated tests — see **docs/BOOKING.md** (setup, security, admin, WhatsApp, tests).
+  Online booking stays **closed** (`salon_settings.booking_enabled = false`) until the salon has entered its
+  real services, prices and opening hours.
+
+### Phase 01 (foundation)
 Architecture, design tokens, typography, i18n FR/AR with RTL, shared UI components,
 responsive layout (header, mobile menu, footer), homepage skeleton with motion.
 
@@ -14,7 +20,7 @@ clearly marked placeholders ("À renseigner" / "سيتم التحديد", "Visue
 ## Run locally
 ```bash
 npm install
-cp .env.example .env.local   # optional for now: Supabase is not used in Phase 01
+cp .env.example .env.local   # VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY (public publishable key)
 npm run dev                  # http://localhost:5173  → redirects to /fr or /ar
 npm run build                # typecheck (tsc -b) + production build
 npm run preview              # serve the production build
@@ -62,6 +68,6 @@ WhatsApp credentials must only ever be stored as Supabase Edge Function secrets.
 
 ## Next phases
 - 02 Public pages (About, Services, Gallery + lightbox, Team, Contact form), sitemap, OG image
-- 03 Booking flow + availability engine
-- 04 Admin dashboard
-- 05 Supabase schema/RLS/migrations, Edge Functions (booking validation, rate limiting, WhatsApp), deployment
+- 03 Booking flow + availability engine ✅ (docs/BOOKING.md)
+- 04 Admin dashboard: appointments ✅ — services, prices, hours, closures, staff and settings screens still to build
+- 05 WhatsApp Cloud API activation (function written, not deployed), deployment

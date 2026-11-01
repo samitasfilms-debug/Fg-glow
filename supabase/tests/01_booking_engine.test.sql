@@ -1,0 +1,194 @@
+-- Automated tests for the booking engine (run on a throwaway local database:
+-- supabase/tests/run.sh). Test fixtures below are fictitious and never seeded
+-- into a real project.
+\set ON_ERROR_STOP 1
+set client_min_messages = warning;
+
+create or replace function pg_temp.expect_error(p_sql text, p_code text) returns void language plpgsql as $$
+begin
+  execute p_sql;
+  raise exception 'EXPECTED ERROR % BUT STATEMENT SUCCEEDED: %', p_code, p_sql;
+exception when others then
+  if sqlerrm not like '%' || p_code || '%' then
+    raise exception 'EXPECTED % GOT %: %', p_code, sqlerrm, p_sql;
+  end if;
+end $$;
+
+create or replace function pg_temp.ok(cond boolean, label text) returns void language plpgsql as $$
+begin
+  if not coalesce(cond, false) then raise exception 'FAILED: %', label; end if;
+  raise notice 'ok - %', label;
+end $$;
+set client_min_messages = notice;
+
+-- Fixtures -------------------------------------------------------------------
+insert into auth.users (id, email) values
+  ('00000000-0000-0000-0000-0000000000a1', 'admin@test.local'),
+  ('00000000-0000-0000-0000-0000000000b2', 'stranger@test.local');
+insert into public.profiles (id, full_name, role) values ('00000000-0000-0000-0000-0000000000a1', 'Test Admin', 'super_admin');
+
+insert into public.services (id, category, name_fr, name_ar, price_dzd, duration_minutes) values
+  ('11111111-1111-1111-1111-111111111111', 'coloring', 'Test A', 'اختبار أ', 2000, 60),
+  ('22222222-2222-2222-2222-222222222222', 'care', 'Test B', 'اختبار ب', 1500, 30),
+  ('33333333-3333-3333-3333-333333333333', 'other', 'Inactive', 'غير نشط', 100, 30);
+update public.services set is_active = false where id = '33333333-3333-3333-3333-333333333333';
+insert into public.working_hours (staff_id, weekday, opens_at, closes_at)
+select null, d, '09:00', '18:00' from generate_series(0, 6) d;
+
+create temp table t_ctx as
+select ((now() at time zone 'Africa/Algiers')::date + 2) as d;
+grant select on t_ctx to anon, authenticated;
+
+-- 1. Disabled by default ----------------------------------------------------
+set role anon;
+select pg_temp.ok((select count(*) from public.get_available_slots((select d from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[])) = 0,
+  'booking disabled → no slots');
+select pg_temp.expect_error($$select public.create_booking_request('{"full_name":"Amel","phone":"0555000001","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"2030-01-01T10:00:00+01:00"}')$$, 'FGG_BOOKING_DISABLED');
+reset role;
+
+update public.salon_settings set booking_enabled = true, buffer_minutes = 15, slot_interval_minutes = 30, min_notice_minutes = 60, salon_capacity = 1;
+
+-- 2. Slots & durations ------------------------------------------------------
+set role anon;
+select pg_temp.ok((select count(*) from public.get_available_slots((select d from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[])) = 17,
+  '60 min service → 17 slots between 09:00 and 17:00');
+select pg_temp.ok((select count(*) from public.get_available_slots((select d from t_ctx), array['11111111-1111-1111-1111-111111111111','22222222-2222-2222-2222-222222222222']::uuid[])) = 16,
+  '60+30 min services → 16 slots (last start 16:30)');
+select pg_temp.expect_error($$select * from public.get_available_slots(current_date + 2, array['33333333-3333-3333-3333-333333333333']::uuid[])$$, 'FGG_SERVICE_UNAVAILABLE');
+select pg_temp.ok((select count(*) from public.get_available_slots((select d - 3 from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[])) = 0, 'past date → no slots');
+select pg_temp.ok((select count(*) from public.get_availability_calendar((select d from t_ctx), (select d + 6 from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[]) where slot_count > 0) = 7, 'calendar: 7 open days');
+
+-- 3. Validation -------------------------------------------------------------
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"A","phone":"0555000001","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'), 'FGG_INVALID_NAME');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel B","phone":"12345","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'), 'FGG_INVALID_PHONE');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel B","phone":"0555000001","email":"nope","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'), 'FGG_INVALID_EMAIL');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel B","phone":"0555000001","service_ids":["33333333-3333-3333-3333-333333333333"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'), 'FGG_SERVICE_UNAVAILABLE');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel B","phone":"0555000001","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:10') at time zone 'Africa/Algiers'), 'FGG_SLOT_UNAVAILABLE');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel B","phone":"0555000001","service_ids":["11111111-1111-1111-1111-111111111111"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '17:30') at time zone 'Africa/Algiers'), 'FGG_SLOT_UNAVAILABLE');
+
+-- 4. Successful request ----------------------------------------------------
+create temp table t_res (r jsonb);
+reset role;
+grant insert, select on t_res to anon;
+set role anon;
+insert into t_res select public.create_booking_request(jsonb_build_object(
+  'full_name', 'Amel Test', 'phone', '0555 00 00 01', 'email', 'amel@test.local', 'notes', 'Test',
+  'locale', 'ar', 'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
+  'starts_at', ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'));
+select pg_temp.ok((select r ->> 'reference' ~ '^FG-[0-9]{6}-[A-Z0-9]{4}$' from t_res), 'reference generated');
+select pg_temp.ok((select r ->> 'status' = 'pending' from t_res), 'status pending');
+select pg_temp.ok((select (r ->> 'total_price_dzd')::int = 3500 and (r ->> 'total_duration_minutes')::int = 90 from t_res), 'totals from database (3500 DZD, 90 min)');
+
+-- 5. Pending request holds the slot (+ buffer) -------------------------------
+-- booked 10:00–11:30 (+15 buffer → 11:45). 60-min candidates 09:00..11:30 now overlap → 17 - 6 = 11
+select pg_temp.ok((select count(*) from public.get_available_slots((select d from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[])) = 11,
+  'pending request + buffer removes overlapping slots');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Other Client","phone":"0661000002","service_ids":["22222222-2222-2222-2222-222222222222"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '10:30') at time zone 'Africa/Algiers'), 'FGG_SLOT_UNAVAILABLE');
+select pg_temp.expect_error(format($$select public.create_booking_request('{"full_name":"Amel Test","phone":"0555000001","service_ids":["22222222-2222-2222-2222-222222222222"],"starts_at":"%s"}')$$, ((select d from t_ctx) + time '11:00') at time zone 'Africa/Algiers'), 'FGG_DUPLICATE_REQUEST');
+
+-- 6. Public users cannot read or change private data --------------------------
+select pg_temp.expect_error('select * from public.appointments', 'permission denied');
+select pg_temp.expect_error('select * from public.customers', 'permission denied');
+select pg_temp.expect_error('select * from public.notifications', 'permission denied');
+select pg_temp.expect_error($$update public.services set price_dzd = 1$$, 'permission denied');
+select pg_temp.expect_error($$select public.admin_update_appointment(gen_random_uuid(), 'confirm')$$, 'permission denied');
+select pg_temp.expect_error($$insert into public.appointments (reference) values ('x')$$, 'permission denied');
+select pg_temp.ok((select count(*) from public.services) = 2, 'anon sees only active services');
+reset role;
+
+-- 7. Snapshots are immutable history ----------------------------------------
+update public.services set price_dzd = 9999 where id = '11111111-1111-1111-1111-111111111111';
+select pg_temp.ok((select price_dzd from public.appointment_services where name_fr = 'Test A') = 2000, 'price snapshot unchanged after price update');
+update public.services set price_dzd = 2000 where id = '11111111-1111-1111-1111-111111111111';
+
+-- 8. Authenticated stranger (not staff) sees nothing and cannot act ------------
+create temp table t_appt as select id from public.appointments limit 1;
+grant select on t_appt to authenticated;
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000b2';
+select pg_temp.ok((select count(*) from public.appointments) = 0, 'non-member reads 0 appointments (RLS)');
+select pg_temp.expect_error(format($$select public.admin_update_appointment('%s', 'confirm')$$, (select id from t_appt)), 'FGG_FORBIDDEN');
+reset role;
+
+-- 9. Hold expiry, competing request, confirmation recheck ----------------------
+update public.appointments set hold_expires_at = now() - interval '1 minute';
+set role anon;
+select pg_temp.ok((select count(*) from public.get_available_slots((select d from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[])) = 17, 'expired hold frees the slot automatically');
+insert into t_res select public.create_booking_request(jsonb_build_object(
+  'full_name', 'Second Client', 'phone', '0770000003', 'locale', 'fr',
+  'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111'),
+  'starts_at', ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'));
+reset role;
+
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
+select pg_temp.ok((select count(*) from public.appointments) = 2, 'admin reads all appointments');
+select pg_temp.ok((public.admin_update_appointment((select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213770000003'), 'confirm', 'ok') ->> 'status') = 'confirmed', 'admin confirms second request');
+select pg_temp.expect_error(format($$select public.admin_update_appointment('%s', 'confirm')$$,
+  (select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001')), 'FGG_SLOT_UNAVAILABLE');
+select pg_temp.ok(true, 'confirming an overlapping request is refused (capacity 1)');
+-- Propose a new time instead
+select pg_temp.ok((public.admin_update_appointment(
+  (select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001'),
+  'propose', 'Plus tôt ?', ((select d from t_ctx) + time '14:00') at time zone 'Africa/Algiers') ->> 'status') = 'reschedule_requested', 'admin proposes another time');
+select pg_temp.ok((select count(*) from public.appointment_events) = 4, 'history recorded (2 created + confirm + propose)');
+select pg_temp.ok((select count(*) from public.notifications where audience = 'customer' and status = 'awaiting_provider') = 2, 'customer notifications logged as awaiting provider (no WhatsApp API)');
+select pg_temp.ok((select count(*) from public.audit_logs) = 2, 'audit log written');
+select pg_temp.expect_error(format($$select public.admin_update_appointment('%s', 'complete')$$,
+  (select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001')), 'FGG_INVALID_TRANSITION');
+select pg_temp.ok((public.admin_update_appointment(
+  (select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001'), 'confirm') ->> 'status') = 'confirmed', 'proposed time confirmed');
+reset role;
+
+-- 10. Closures -----------------------------------------------------------------
+insert into public.blocked_slots (staff_id, starts_at, ends_at, reason)
+values (null, ((select d + 1 from t_ctx)::timestamp) at time zone 'Africa/Algiers', ((select d + 2 from t_ctx)::timestamp) at time zone 'Africa/Algiers', 'test closure');
+set role anon;
+select pg_temp.ok((select count(*) from public.get_available_slots((select d + 1 from t_ctx), array['22222222-2222-2222-2222-222222222222']::uuid[])) = 0, 'closed day → no slots');
+reset role;
+
+-- 11. Staff mode + exclusion constraint ----------------------------------------
+insert into public.staff (id, display_name) values ('44444444-4444-4444-4444-444444444444', 'Test Pro');
+insert into public.staff_services values ('44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111');
+set role anon;
+select pg_temp.ok((select count(*) from public.get_available_slots((select d + 3 from t_ctx), array['22222222-2222-2222-2222-222222222222']::uuid[])) = 0, 'staff mode: service with no qualified professional → no slots');
+select pg_temp.ok((select count(*) from public.get_available_slots((select d + 3 from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[], '44444444-4444-4444-4444-444444444444')) = 17, 'staff mode: professional slots');
+reset role;
+insert into public.appointments (reference, customer_id, staff_id, starts_at, ends_at, blocked_until, status, total_price_dzd, total_duration_minutes)
+select 'FG-000000-AAAA', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days', now() + interval '10 days 1 hour', now() + interval '10 days 1 hour', 'confirmed', 0, 60 from public.customers limit 1;
+select pg_temp.expect_error($$insert into public.appointments (reference, customer_id, staff_id, starts_at, ends_at, blocked_until, status, total_price_dzd, total_duration_minutes)
+  select 'FG-000000-BBBB', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days 30 minutes', now() + interval '10 days 90 minutes', now() + interval '10 days 90 minutes', 'confirmed', 0, 60 from public.customers limit 1$$, 'appointments_no_staff_overlap');
+select pg_temp.ok(true, 'exclusion constraint blocks overlapping confirmed appointments for one professional');
+
+-- 12. Rate limit -----------------------------------------------------------------
+delete from public.staff;
+set role anon;
+select public.create_booking_request(jsonb_build_object('full_name', 'Rate Test', 'phone', '0550000009',
+  'service_ids', jsonb_build_array('22222222-2222-2222-2222-222222222222'), 'starts_at', ((select d + 4 from t_ctx) + time '09:00') at time zone 'Africa/Algiers')) is not null;
+select public.create_booking_request(jsonb_build_object('full_name', 'Rate Test', 'phone', '0550000009',
+  'service_ids', jsonb_build_array('22222222-2222-2222-2222-222222222222'), 'starts_at', ((select d + 4 from t_ctx) + time '11:00') at time zone 'Africa/Algiers')) is not null;
+select public.create_booking_request(jsonb_build_object('full_name', 'Rate Test', 'phone', '0550000009',
+  'service_ids', jsonb_build_array('22222222-2222-2222-2222-222222222222'), 'starts_at', ((select d + 4 from t_ctx) + time '13:00') at time zone 'Africa/Algiers')) is not null;
+select pg_temp.expect_error(format($$select public.create_booking_request(jsonb_build_object('full_name', 'Rate Test', 'phone', '0550000009',
+  'service_ids', jsonb_build_array('22222222-2222-2222-2222-222222222222'), 'starts_at', '%s'))$$, ((select d + 4 from t_ctx) + time '15:00') at time zone 'Africa/Algiers'), 'FGG_RATE_LIMITED');
+select pg_temp.ok(true, '4th request from the same phone within 24h is rate-limited');
+reset role;
+
+-- 13. Read API ---------------------------------------------------------------------
+set role anon;
+select pg_temp.ok(jsonb_array_length(public.get_public_catalog() -> 'services') = 2, 'public catalogue lists active services only');
+select pg_temp.expect_error('select public.admin_list_appointments()', 'permission denied');
+reset role;
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000b2';
+select pg_temp.expect_error('select public.admin_list_appointments()', 'FGG_FORBIDDEN');
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
+select pg_temp.ok((public.admin_list_appointments() ->> 'total')::int >= 5, 'admin lists appointments');
+select pg_temp.ok((public.admin_list_appointments(array['confirmed']::public.appointment_status[]) -> 'items' -> 0 ->> 'status') = 'confirmed', 'status filter');
+select pg_temp.ok((public.admin_list_appointments(null, null, null, '0555 00 00 01') -> 'items' -> 0 ->> 'customer_phone') = '+213555000001', 'search by phone');
+select pg_temp.ok((public.admin_list_appointments(null, null, null, 'amel') -> 'items' -> 0 ->> 'customer_name') = 'Amel Test', 'search by name');
+select pg_temp.ok(jsonb_array_length(public.admin_get_appointment((select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001' and a.reference <> 'FG-000000-AAAA')) -> 'events') = 3, 'detail includes history');
+select pg_temp.ok((public.get_my_profile() ->> 'role') = 'super_admin', 'own profile');
+reset role;
+
+\echo ALL BOOKING ENGINE TESTS PASSED

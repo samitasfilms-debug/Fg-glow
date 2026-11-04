@@ -1,9 +1,6 @@
 -- LOCAL TESTING ONLY: fictitious fixtures for the end-to-end tests.
 -- Never applied to a real project. Names/prices are obviously fake.
-insert into auth.users (id, email) values
-  ('00000000-0000-0000-0000-0000000000a1', 'admin@test.local'),
-  ('00000000-0000-0000-0000-0000000000b2', 'stranger@test.local');
-insert into public.profiles (id, full_name, role) values ('00000000-0000-0000-0000-0000000000a1', 'Admin Test', 'super_admin');
+-- Test logins are in e2e/seed-accounts.sql (loaded first).
 
 insert into public.services (id, category, name_fr, name_ar, description_fr, description_ar, price_dzd, duration_minutes, sort_order) values
   ('11111111-1111-1111-1111-111111111111', 'brushing', 'Service test A', 'خدمة تجريبية أ', 'Description de test A.', 'وصف تجريبي أ.', 1000, 60, 1),

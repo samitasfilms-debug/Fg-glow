@@ -1,4 +1,4 @@
-import { CalendarDays, ExternalLink, LogOut } from 'lucide-react'
+import { CalendarDays, Clock, ExternalLink, LogOut, Scissors } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink, Navigate, Outlet } from 'react-router-dom'
 import { Seo } from '@/components/layout/Seo'
@@ -11,6 +11,12 @@ import { localePath } from '@/i18n/paths'
 import { cn } from '@/lib/cn'
 import { AdminLanguageToggle } from './AdminLanguageToggle'
 import { useAdminSession } from './session-context'
+
+const NAV = [
+  { to: '/admin/rendez-vous', key: 'appointments', Icon: CalendarDays },
+  { to: '/admin/prestations', key: 'services', Icon: Scissors },
+  { to: '/admin/horaires', key: 'setup', Icon: Clock },
+] as const
 
 /** Authenticated shell. Anything not "ready" goes back to the login page. */
 export function AdminLayout() {
@@ -41,16 +47,19 @@ export function AdminLayout() {
             <Wordmark size="sm" />
             <span className="hidden text-xs tracking-[0.2em] text-cocoa-muted uppercase sm:inline">{t('admin.title')}</span>
           </Link>
-          <nav className="order-last flex w-full gap-1 md:order-none md:w-auto" aria-label={t('admin.nav.menu')}>
-            <NavLink
-              to="/admin/rendez-vous"
-              className={({ isActive }) =>
-                cn('inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm', isActive ? 'bg-cocoa text-ivory' : 'text-cocoa hover:bg-blush-100')
-              }
-            >
-              <CalendarDays aria-hidden className="size-4" strokeWidth={1.5} />
-              {t('admin.nav.appointments')}
-            </NavLink>
+          <nav className="order-last -mx-1 flex w-full gap-1 overflow-x-auto px-1 md:order-none md:w-auto" aria-label={t('admin.nav.menu')}>
+            {NAV.map(({ to, key, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  cn('inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm whitespace-nowrap', isActive ? 'bg-cocoa text-ivory' : 'text-cocoa hover:bg-blush-100')
+                }
+              >
+                <Icon aria-hidden className="size-4" strokeWidth={1.5} />
+                {t(`admin.nav.${key}`)}
+              </NavLink>
+            ))}
           </nav>
           <div className="flex items-center gap-2">
             <a href={localePath(locale)} target="_blank" rel="noreferrer" className="hidden min-h-11 items-center gap-1.5 rounded-full px-3 text-sm text-cocoa-soft hover:text-cocoa sm:inline-flex">

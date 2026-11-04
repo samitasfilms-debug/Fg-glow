@@ -191,4 +191,31 @@ select pg_temp.ok(jsonb_array_length(public.admin_get_appointment((select a.id f
 select pg_temp.ok((public.get_my_profile() ->> 'role') = 'super_admin', 'own profile');
 reset role;
 
+-- 14. Salon set-up from the admin -------------------------------------------------
+set role anon;
+select pg_temp.expect_error($$select public.admin_save_salon_hours('[]')$$, 'permission denied');
+select pg_temp.expect_error($$insert into public.services (name_fr, name_ar, price_dzd, duration_minutes) values ('x', 'x', 1, 30)$$, 'permission denied');
+reset role;
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000b2';
+select pg_temp.expect_error($$select public.admin_save_salon_hours('[]')$$, 'FGG_FORBIDDEN');
+select pg_temp.expect_error($$select public.admin_set_booking_enabled(true)$$, 'FGG_FORBIDDEN');
+select pg_temp.expect_error($$insert into public.services (name_fr, name_ar, price_dzd, duration_minutes) values ('x', 'x', 1, 30)$$, 'row-level security');
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
+select pg_temp.expect_error($$select public.admin_save_salon_hours('[{"weekday":1,"opens_at":"12:00","closes_at":"10:00"}]')$$, 'FGG_INVALID_HOURS');
+select pg_temp.expect_error($$select public.admin_save_salon_hours('[{"weekday":1,"opens_at":"09:00","closes_at":"13:00"},{"weekday":1,"opens_at":"12:00","closes_at":"18:00"}]')$$, 'FGG_INVALID_HOURS');
+select pg_temp.ok((select count(*) from public.working_hours where staff_id is null) = 7, 'invalid hours are rolled back');
+select pg_temp.ok(public.admin_save_salon_hours('[{"weekday":6,"opens_at":"09:00","closes_at":"12:30"},{"weekday":6,"opens_at":"14:00","closes_at":"18:00"},{"weekday":0,"opens_at":"10:00","closes_at":"17:00"}]') = 3, 'admin saves split opening hours');
+select pg_temp.ok((select count(*) from public.working_hours where staff_id is null) = 3, 'salon hours replaced atomically');
+select pg_temp.ok(public.admin_save_salon_hours('[]') = 0, 'clearing all hours');
+select pg_temp.ok(not (select booking_enabled from public.salon_settings), 'no hours → booking closed automatically');
+select pg_temp.expect_error($$select public.admin_set_booking_enabled(true)$$, 'FGG_SETUP_NO_HOURS');
+select public.admin_save_salon_hours('[{"weekday":1,"opens_at":"09:00","closes_at":"18:00"}]');
+update public.services set is_active = false;
+select pg_temp.expect_error($$select public.admin_set_booking_enabled(true)$$, 'FGG_SETUP_NO_SERVICES');
+insert into public.services (name_fr, name_ar, price_dzd, duration_minutes) values ('Admin created', 'أنشأتها الإدارة', 1234, 45);
+select pg_temp.ok(public.admin_set_booking_enabled(true), 'booking opens once services + hours exist');
+select pg_temp.ok((select booking_enabled from public.salon_settings), 'booking_enabled stored');
+reset role;
+
 \echo ALL BOOKING ENGINE TESTS PASSED

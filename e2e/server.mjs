@@ -1,5 +1,6 @@
-// LOCAL TESTING ONLY. Serves the built site and emulates the two Supabase
-// endpoints the app uses (PostgREST RPC + GoTrue password login) on top of a
+// LOCAL TESTING ONLY. Serves the built site and emulates the Supabase
+// endpoints the app uses (PostgREST RPC, the subset of PostgREST table access
+// used by the admin set-up screens, GoTrue password login) on top of a
 // real local PostgreSQL that has the project's migrations applied. Every RPC
 // runs under the same role (anon / authenticated) and auth.uid() as in
 // Supabase, so RLS, grants and SECURITY DEFINER behave like production.
@@ -107,6 +108,81 @@ async function rpc(req, res, name) {
   }
 }
 
+// Minimal PostgREST table emulation: select/insert/update/delete with the
+// filters the app uses (eq, is, gte, lte, gt, lt) and order. Identifiers are whitelisted.
+const IDENT = /^[a-z_][a-z0-9_]*$/
+const OPS = { eq: '=', gte: '>=', lte: '<=', gt: '>', lt: '<' }
+async function table(req, res, name, url) {
+  if (!IDENT.test(name)) return send(res, 400, { message: 'bad table' })
+  const filters = [] // [sqlFragmentWithPlaceholderToken, value|undefined]
+  let order = ''
+  let columns = '*'
+  for (const [k, v] of url.searchParams) {
+    if (k === 'select') {
+      columns = v.split(',').map((c) => c.trim()).filter((c) => IDENT.test(c)).join(', ') || '*'
+    } else if (k === 'order') {
+      const parts = []
+      for (const o of v.split(',')) {
+        const [col, dir] = o.split('.')
+        if (!IDENT.test(col)) return send(res, 400, { message: 'bad order' })
+        parts.push(`${col} ${dir === 'desc' ? 'desc' : 'asc'}`)
+      }
+      order = ` order by ${parts.join(', ')}`
+    } else if (k !== 'columns') {
+      if (!IDENT.test(k)) return send(res, 400, { message: 'bad filter' })
+      const dot = v.indexOf('.')
+      const op = v.slice(0, dot)
+      const val = v.slice(dot + 1)
+      if (op === 'is') filters.push([`${k} is ${val === 'null' ? 'null' : val === 'true' ? 'true' : 'false'}`])
+      else if (OPS[op]) filters.push([`${k} ${OPS[op]} ?`, val])
+      else return send(res, 400, { message: `unsupported operator ${op}` })
+    }
+  }
+  const params = []
+  const bind = (v) => {
+    params.push(v)
+    return `$${params.length}`
+  }
+  const whereSql = () => (filters.length ? ` where ${filters.map(([f, v]) => (v === undefined ? f : f.replace('?', bind(v)))).join(' and ')}` : '')
+
+  let sql
+  if (req.method === 'GET') sql = `select ${columns} from public.${name}${whereSql()}${order}`
+  else if (req.method === 'DELETE') sql = `delete from public.${name}${whereSql()}`
+  else {
+    const body = await readBody(req)
+    const rows = Array.isArray(body) ? body : [body]
+    const keys = Object.keys(rows[0] ?? {})
+    if (!keys.length || !keys.every((c) => IDENT.test(c))) return send(res, 400, { message: 'bad column' })
+    if (req.method === 'POST') {
+      const values = rows.map((r) => `(${keys.map((c) => bind(r[c])).join(', ')})`)
+      sql = `insert into public.${name} (${keys.join(', ')}) values ${values.join(', ')}`
+    } else if (req.method === 'PATCH') {
+      const sets = keys.map((c) => `${c} = ${bind(rows[0][c])}`)
+      sql = `update public.${name} set ${sets.join(', ')}${whereSql()}`
+    } else return send(res, 405, { message: 'method not allowed' })
+  }
+
+  const user = userOf(req)
+  const client = await pool.connect()
+  try {
+    await client.query('begin')
+    await client.query(`set local role ${user ? 'authenticated' : 'anon'}`)
+    await client.query(`select set_config('request.jwt.claim.sub', $1, true)`, [user?.id ?? ''])
+    const { rows } = await client.query(sql, params)
+    await client.query('commit')
+    if (req.method !== 'GET') return send(res, 201, undefined)
+    if ((req.headers.accept ?? '').includes('vnd.pgrst.object')) {
+      return rows.length === 1 ? send(res, 200, rows[0]) : send(res, 406, { code: 'PGRST116', message: 'JSON object requested, multiple (or no) rows returned' })
+    }
+    send(res, 200, rows)
+  } catch (e) {
+    await client.query('rollback').catch(() => {})
+    send(res, e.code === '42501' ? 403 : 400, { code: e.code, message: e.message, details: null, hint: null })
+  } finally {
+    client.release()
+  }
+}
+
 async function auth(req, res, path, url) {
   if (path === '/auth/v1/token' && url.searchParams.get('grant_type') === 'password') {
     const { email, password } = await readBody(req)
@@ -145,7 +221,7 @@ createServer(async (req, res) => {
   const path = url.pathname
   try {
     if (path.startsWith('/rest/v1/rpc/') && req.method === 'POST') return await rpc(req, res, path.slice('/rest/v1/rpc/'.length))
-    if (path.startsWith('/rest/v1/')) return send(res, 404, { message: 'direct table access is not used by the app' })
+    if (path.startsWith('/rest/v1/')) return await table(req, res, path.slice('/rest/v1/'.length), url)
     if (path.startsWith('/auth/v1/')) return await auth(req, res, path, url)
     return await staticFile(res, path)
   } catch (e) {

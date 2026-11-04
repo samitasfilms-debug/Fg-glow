@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { BookingError } from '@/features/booking/api'
+import type { ServiceCategoryKey } from '@/config/services'
 
 /**
  * Salon set-up (services, opening hours, closures, booking rules).
@@ -7,8 +8,8 @@ import { BookingError } from '@/features/booking/api'
  * operations that must be atomic or guarded are database functions.
  */
 
-export const SERVICE_CATEGORIES = ['brushing', 'haircut', 'coloring', 'balayage', 'straightening', 'care', 'event', 'bridal', 'other'] as const
-export type ServiceCategory = (typeof SERVICE_CATEGORIES)[number]
+export { SERVICE_CATEGORIES } from '@/config/services'
+export type ServiceCategory = ServiceCategoryKey
 
 export interface AdminService {
   id: string

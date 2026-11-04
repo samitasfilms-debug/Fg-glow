@@ -53,6 +53,11 @@ const fr = {
   },
   services: {
     categories: {
+      lashes: 'Extensions & rehaussement de cils',
+      brows: 'Sourcils',
+      manicure: 'Manucure',
+      pedicure: 'Pédicure',
+      waxing: 'Épilation',
       brushing: 'Brushing',
       haircut: 'Coupe femme',
       coloring: 'Coloration',

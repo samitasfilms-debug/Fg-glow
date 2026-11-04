@@ -5,6 +5,11 @@
  * Labels live in the i18n files under `services.categories.<key>`.
  */
 export const SERVICE_CATEGORIES = [
+  'lashes',
+  'brows',
+  'manicure',
+  'pedicure',
+  'waxing',
   'brushing',
   'haircut',
   'coloring',

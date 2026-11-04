@@ -50,6 +50,11 @@ const ar: Translation = {
   },
   services: {
     categories: {
+      lashes: 'تمديد ورفع الرموش',
+      brows: 'الحواجب',
+      manicure: 'مانيكير',
+      pedicure: 'باديكير',
+      waxing: 'إزالة الشعر',
       brushing: 'براشينغ',
       haircut: 'قصّ الشعر',
       coloring: 'صبغ الشعر',

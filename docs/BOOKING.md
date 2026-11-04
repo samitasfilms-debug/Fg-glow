@@ -14,6 +14,7 @@ Migrations live in `supabase/migrations/` and are already applied to the `fg-glo
 | `20261101000001_booking_core.sql` | enums, tables, triggers, RLS policies, grants |
 | `20261101000002_booking_engine.sql` | availability engine, `create_booking_request`, admin status changes |
 | `20261101000003_booking_read_api.sql` | `get_public_catalog`, `admin_list_appointments`, `admin_get_appointment`, `get_my_profile` |
+| `20261104000001_salon_setup_admin.sql` | `admin_save_salon_hours` (atomic weekly hours), `admin_set_booking_enabled` (refuses to open without services + hours) |
 
 Tables: `profiles`, `salon_settings` (one row), `services`, `staff`, `staff_services`, `working_hours`,
 `blocked_slots`, `customers`, `appointments`, `appointment_services` (price/name snapshots),
@@ -44,14 +45,18 @@ Slots are computed by the database from: opening hours (salon or per staff), `bl
 If at least one active staff member has services assigned, booking works per staff member
 ("staff mode"); otherwise the salon's `salon_capacity` is used. Time zone: `Africa/Algiers`.
 
-## 2. Before opening online booking (salon data — nothing has been invented)
-In the Supabase dashboard → Table editor (an admin screen for this is the next step):
-1. `services`: real names FR/AR, descriptions, **real prices in DZD**, durations, `is_active`.
-2. `working_hours`: real opening hours (`staff_id` empty = salon; weekday 0 = Sunday … 6 = Saturday).
-3. `blocked_slots`: holidays / closures.
-4. Optional `staff` + `staff_services` (+ staff `working_hours`).
-5. `salon_settings`: interval, buffer, capacity, notice, `whatsapp_number` (+213…), then
-   **`booking_enabled = true`**. Until then the page shows "La réservation en ligne ouvrira très bientôt."
+## 2. Opening online booking (salon data — nothing has been invented)
+Everything is entered by the salon in the admin dashboard; nothing is seeded:
+1. **`/admin/prestations`** — add each service: category, name FR + AR, optional descriptions,
+   **real price in DZD**, duration in minutes, active / bookable online.
+2. **`/admin/horaires`** — weekly opening hours (one or more ranges per day; a day with no range
+   is closed), exceptional closures (whole days), booking rules (slot interval, buffer, capacity,
+   minimum notice, how far ahead, pending hold, max services, salon WhatsApp number).
+3. **`/admin/horaires` → "Ouvrir la réservation en ligne"**. The button stays disabled (and the
+   database refuses) until at least one active service and opening hours exist.
+
+Until then `/reservation` says online booking is unavailable and links to the contact page
+(no "coming soon" wording). Removing all hours closes booking automatically.
 
 ## 3. Creating the first admin
 1. Supabase → Authentication → Users → *Add user* (email + password, auto-confirm).
@@ -63,7 +68,7 @@ In the Supabase dashboard → Table editor (an admin screen for this is the next
    Roles: `super_admin` and `manager` can act on appointments; `staff` can only view.
 3. Sign in at `/admin` (→ `/admin/connexion`).
 
-## 4. Admin (`/admin/rendez-vous`)
+## 4. Admin appointments (`/admin/rendez-vous`)
 List with status filters + counts, search (name, phone, reference), date range.
 Detail: services and snapshot prices, customer (phone, email, notes, visit count, call button),
 history, WhatsApp notifications, and actions allowed for the current status
@@ -91,12 +96,16 @@ VITE_SUPABASE_ANON_KEY=<publishable key from Supabase → Project Settings → A
 All tests use a throwaway local PostgreSQL with fictitious fixtures. Nothing is seeded in the real project.
 ```bash
 # PostgreSQL 16 on PGHOST/PGPORT/PGUSER
-supabase/tests/run.sh               # 33 SQL assertions: slots, rules, RLS, transitions, admin API
+supabase/tests/run.sh               # SQL assertions (engine + salon set-up): slots, rules, RLS, transitions, admin API
 supabase/tests/02_concurrency.sh    # 8 parallel requests for one slot → 1 accepted, 7 refused
 e2e/setup-db.sh                     # e2e database = migrations + e2e/seed.sql
 VITE_SUPABASE_URL=http://127.0.0.1:4400 VITE_SUPABASE_ANON_KEY=test npx vite build --outDir dist-e2e
 e2e/start-server.sh                 # serves the build + emulates Supabase RPC/Auth over the real SQL
 node e2e/run.mjs                    # 16 Playwright scenarios (FR, AR, mobile, admin)
+# From an empty salon: admin adds a service + hours, opens booking, customer books (AR), admin confirms
+E2E_DB=fgg_e2e_empty e2e/setup-db.sh --accounts-only
+E2E_DB=fgg_e2e_empty e2e/start-server.sh
+E2E_DB=fgg_e2e_empty node e2e/setup-flow.mjs
 ```
 `e2e/server.mjs` is a local stand-in for PostgREST/GoTrue: it runs each RPC as `anon` or
 `authenticated` with `auth.uid()` set, so grants, RLS and functions behave as on Supabase,

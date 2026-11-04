@@ -23,6 +23,8 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to="rendez-vous" replace /> },
           { path: 'rendez-vous', lazy: async () => ({ Component: (await import('@/features/admin/AppointmentsPage')).AppointmentsPage }) },
           { path: 'rendez-vous/:id', lazy: async () => ({ Component: (await import('@/features/admin/AppointmentDetailPage')).AppointmentDetailPage }) },
+          { path: 'prestations', lazy: async () => ({ Component: (await import('@/features/admin/ServicesPage')).ServicesPage }) },
+          { path: 'horaires', lazy: async () => ({ Component: (await import('@/features/admin/SalonSetupPage')).SalonSetupPage }) },
           { path: '*', element: <Navigate to="rendez-vous" replace /> },
         ],
       },

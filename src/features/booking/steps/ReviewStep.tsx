@@ -9,6 +9,8 @@ import type { BookingDraft } from '../useBookingDraft'
 
 interface Props {
   services: CatalogService[]
+  optionIds: string[]
+  priceIsMinimum: boolean
   staff: CatalogStaff | null
   slot: string
   customer: BookingDraft['customer']
@@ -17,7 +19,7 @@ interface Props {
   onEdit: (step: number) => void
 }
 
-export function ReviewStep({ services, staff, slot, customer, totalPrice, totalDuration, onEdit }: Props) {
+export function ReviewStep({ services, optionIds, priceIsMinimum, staff, slot, customer, totalPrice, totalDuration, onEdit }: Props) {
   const { t } = useTranslation()
   const { locale } = useLocale()
   const name = (s: CatalogService) => (locale === 'ar' ? s.name_ar : s.name_fr)
@@ -36,6 +38,17 @@ export function ReviewStep({ services, staff, slot, customer, totalPrice, totalD
                 <span className="flex flex-col">
                   <span className="text-cocoa">{name(s)}</span>
                   <span className="text-xs text-cocoa-muted">{formatDuration(s.duration_minutes, locale)}</span>
+                  {(s.options ?? [])
+                    .filter((o) => optionIds.includes(o.id))
+                    .map((o) => (
+                      <span key={o.id} className="mt-1 flex justify-between gap-4 text-sm text-cocoa-soft" data-testid="review-option">
+                        <span>+ {locale === 'ar' ? o.name_ar : o.name_fr}</span>
+                        <span className="tabular-nums">
+                          {o.price_is_minimum ? `${t('booking.options.from')} ` : ''}
+                          {formatPrice(o.price_dzd, locale)}
+                        </span>
+                      </span>
+                    ))}
                 </span>
                 <span className="shrink-0 tabular-nums text-cocoa">{formatPrice(s.price_dzd, locale)}</span>
               </li>
@@ -49,6 +62,7 @@ export function ReviewStep({ services, staff, slot, customer, totalPrice, totalD
               </span>
             </span>
             <span className="font-display text-3xl text-cocoa" data-testid="review-total">
+              {priceIsMinimum ? <span className="me-1 text-base text-cocoa-soft">{t('booking.options.from')}</span> : null}
               {formatPrice(totalPrice, locale)}
             </span>
           </div>

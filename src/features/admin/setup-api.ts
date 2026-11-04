@@ -27,6 +27,17 @@ export interface AdminService {
 
 export type ServiceInput = Omit<AdminService, 'id'>
 
+export interface AdminServiceOption {
+  id?: string
+  service_id?: string
+  name_fr: string
+  name_ar: string
+  price_dzd: number
+  price_is_minimum: boolean
+  is_active: boolean
+  sort_order: number
+}
+
 export interface HoursRange {
   weekday: number // 0 = Sunday … 6 = Saturday
   opens_at: string // "HH:mm"
@@ -85,9 +96,40 @@ export const setupApi = {
     if (error) fail(error)
     return data as AdminService[]
   },
-  async createService(input: ServiceInput) {
-    const { error } = await db().from('services').insert(input)
+  async createService(input: ServiceInput): Promise<string> {
+    const id = crypto.randomUUID()
+    const { error } = await db().from('services').insert({ id, ...input })
     if (error) fail(error)
+    return id
+  },
+  /** Every supplement, grouped by service id. */
+  async options(): Promise<Record<string, AdminServiceOption[]>> {
+    const { data, error } = await db()
+      .from('service_options')
+      .select('id, service_id, name_fr, name_ar, price_dzd, price_is_minimum, is_active, sort_order')
+      .order('sort_order')
+      .order('name_fr')
+    if (error) fail(error)
+    const out: Record<string, AdminServiceOption[]> = {}
+    for (const o of data as AdminServiceOption[]) (out[o.service_id!] ??= []).push(o)
+    return out
+  },
+  /** Replaces a service's supplements with `next` (update kept ids, insert new, delete removed). */
+  async saveOptions(serviceId: string, previous: AdminServiceOption[], next: AdminServiceOption[]) {
+    const keep = new Set(next.filter((o) => o.id).map((o) => o.id))
+    for (const o of previous) {
+      if (o.id && !keep.has(o.id)) {
+        const { error } = await db().from('service_options').delete().eq('id', o.id)
+        if (error) fail(error)
+      }
+    }
+    for (const [i, o] of next.entries()) {
+      const row = { name_fr: o.name_fr, name_ar: o.name_ar, price_dzd: o.price_dzd, price_is_minimum: o.price_is_minimum, is_active: o.is_active, sort_order: i }
+      const { error } = o.id
+        ? await db().from('service_options').update(row).eq('id', o.id)
+        : await db().from('service_options').insert({ ...row, service_id: serviceId })
+      if (error) fail(error)
+    }
   },
   async updateService(id: string, input: Partial<ServiceInput>) {
     const { error } = await db().from('services').update(input).eq('id', id)

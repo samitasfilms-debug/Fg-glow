@@ -9,11 +9,13 @@ export function SelectionSummary({
   count,
   totalPrice,
   totalDuration,
+  priceIsMinimum = false,
   className,
 }: {
   count: number
   totalPrice: number
   totalDuration: number
+  priceIsMinimum?: boolean
   className?: string
 }) {
   const { t } = useTranslation()
@@ -29,6 +31,7 @@ export function SelectionSummary({
         </span>
         <span className="font-display text-2xl text-cocoa" data-testid="total-price">
           <span className="sr-only">{t('booking.summary.total')} </span>
+          {priceIsMinimum ? <span className="me-1 text-sm text-cocoa-soft">{t('booking.options.from')}</span> : null}
           {formatPrice(totalPrice, locale)}
         </span>
       </span>

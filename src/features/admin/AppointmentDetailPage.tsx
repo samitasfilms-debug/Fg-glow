@@ -155,11 +155,22 @@ export function AppointmentDetailPage() {
           <Panel title={t('admin.detail.services')}>
             <ul className="divide-y divide-line">
               {a.services.map((s, i) => (
-                <li key={i} className="flex justify-between gap-4 py-2 text-sm">
-                  <span className="text-cocoa">
-                    {svcName(s)} <span className="text-xs text-cocoa-muted">· {formatDuration(s.duration_minutes, locale)}</span>
+                <li key={i} className="flex flex-col gap-1 py-2 text-sm">
+                  <span className="flex justify-between gap-4">
+                    <span className="text-cocoa">
+                      {svcName(s)} <span className="text-xs text-cocoa-muted">· {formatDuration(s.duration_minutes, locale)}</span>
+                    </span>
+                    <span className="tabular-nums">{formatPrice(s.price_dzd, locale)}</span>
                   </span>
-                  <span className="tabular-nums">{formatPrice(s.price_dzd, locale)}</span>
+                  {(s.options ?? []).map((o, j) => (
+                    <span key={j} className="flex justify-between gap-4 ps-3 text-cocoa-soft" data-testid="detail-option">
+                      <span>+ {svcName(o)}</span>
+                      <span className="tabular-nums">
+                        {o.price_is_minimum ? `${t('booking.options.from')} ` : ''}
+                        {formatPrice(o.price_dzd, locale)}
+                      </span>
+                    </span>
+                  ))}
                 </li>
               ))}
             </ul>

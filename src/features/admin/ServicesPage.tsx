@@ -1,4 +1,4 @@
-import { AlertCircle, Pencil, Plus, Scissors, Trash2 } from 'lucide-react'
+import { AlertCircle, Pencil, Plus, Scissors, Trash2, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/Badge'
@@ -10,9 +10,12 @@ import { BookingError } from '@/features/booking/api'
 import { useLocale } from '@/i18n/locale-context'
 import { formatDuration, formatPrice } from '@/lib/format'
 import { canManage, useAdminSession } from './session-context'
-import { SERVICE_CATEGORIES, setupApi, type AdminService, type ServiceInput } from './setup-api'
+import { SERVICE_CATEGORIES, setupApi, type AdminService, type AdminServiceOption, type ServiceInput } from './setup-api'
 
-type State = { status: 'loading' } | { status: 'error'; code: string } | { status: 'ready'; items: AdminService[] }
+type State =
+  | { status: 'loading' }
+  | { status: 'error'; code: string }
+  | { status: 'ready'; items: AdminService[]; options: Record<string, AdminServiceOption[]> }
 
 const errCode = (e: unknown) => (e instanceof BookingError ? e.code : 'generic')
 
@@ -26,9 +29,8 @@ export function ServicesPage() {
   const [notice, setNotice] = useState<string | null>(null)
 
   const load = useCallback(() => {
-    setupApi
-      .services()
-      .then((items) => setState({ status: 'ready', items }))
+    Promise.all([setupApi.services(), setupApi.options()])
+      .then(([items, options]) => setState({ status: 'ready', items, options }))
       .catch((e: unknown) => setState({ status: 'error', code: errCode(e) }))
   }, [])
   useEffect(load, [load])
@@ -102,6 +104,14 @@ export function ServicesPage() {
                   <Badge tone={s.is_active ? 'success' : 'muted'}>{s.is_active ? t('admin.services.active') : t('admin.services.inactive')}</Badge>
                   <Badge tone={s.is_bookable_online ? 'gold' : 'muted'}>{s.is_bookable_online ? t('admin.services.online') : t('admin.services.offline')}</Badge>
                 </div>
+                {(state.options[s.id] ?? []).length > 0 ? (
+                  <p className="text-xs text-cocoa-muted" data-testid="service-options-summary">
+                    {t('admin.services.options.title')} :{' '}
+                    {(state.options[s.id] ?? [])
+                      .map((o) => `${locale === 'ar' ? o.name_ar : o.name_fr} ${o.price_is_minimum ? t('booking.options.from') + ' ' : '+'}${formatPrice(o.price_dzd, locale)}${o.is_active ? '' : ` (${t('admin.services.inactive')})`}`)
+                      .join(' · ')}
+                  </p>
+                ) : null}
               </div>
               {manage ? (
                 <div className="flex shrink-0 gap-2">
@@ -120,6 +130,7 @@ export function ServicesPage() {
 
       <ServiceDialog
         service={editing}
+        options={editing && editing !== 'new' && state.status === 'ready' ? (state.options[editing.id] ?? []) : []}
         onClose={() => setEditing(null)}
         onSaved={() => {
           setEditing(null)
@@ -144,10 +155,30 @@ const emptyForm = {
   is_bookable_online: true,
 }
 
-function ServiceDialog({ service, onClose, onSaved }: { service: AdminService | 'new' | null; onClose: () => void; onSaved: () => void }) {
+interface OptionRow {
+  id?: string
+  name_fr: string
+  name_ar: string
+  price: string
+  price_is_minimum: boolean
+  is_active: boolean
+}
+
+function ServiceDialog({
+  service,
+  options,
+  onClose,
+  onSaved,
+}: {
+  service: AdminService | 'new' | null
+  options: AdminServiceOption[]
+  onClose: () => void
+  onSaved: () => void
+}) {
   const { t } = useTranslation()
   const ref = useRef<HTMLDialogElement>(null)
   const [form, setForm] = useState(emptyForm)
+  const [rows, setRows] = useState<OptionRow[]>([])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -172,10 +203,13 @@ function ServiceDialog({ service, onClose, onSaved }: { service: AdminService | 
               is_bookable_online: service.is_bookable_online,
             },
       )
+      setRows(options.map((o) => ({ id: o.id, name_fr: o.name_fr, name_ar: o.name_ar, price: String(o.price_dzd), price_is_minimum: o.price_is_minimum, is_active: o.is_active })))
       d.showModal()
     }
     if (!service && d.open) d.close()
-  }, [service])
+  }, [service, options])
+
+  const setRow = (i: number, patch: Partial<OptionRow>) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)))
 
   const set = <K extends keyof typeof emptyForm>(k: K, v: (typeof emptyForm)[K]) => setForm((f) => ({ ...f, [k]: v }))
 
@@ -196,8 +230,24 @@ function ServiceDialog({ service, onClose, onSaved }: { service: AdminService | 
     setBusy(true)
     setError(null)
     try {
-      if (service === 'new') await setupApi.createService(input)
-      else if (service) await setupApi.updateService(service.id, input)
+      const id = service === 'new' ? await setupApi.createService(input) : service ? (await setupApi.updateService(service.id, input), service.id) : null
+      if (id) {
+        await setupApi.saveOptions(
+          id,
+          options,
+          rows
+            .filter((r) => r.name_fr.trim() && r.name_ar.trim())
+            .map((r, i) => ({
+              id: r.id,
+              name_fr: r.name_fr.trim(),
+              name_ar: r.name_ar.trim(),
+              price_dzd: Number(r.price) || 0,
+              price_is_minimum: r.price_is_minimum,
+              is_active: r.is_active,
+              sort_order: i,
+            })),
+        )
+      }
       onSaved()
     } catch (err) {
       setError(errCode(err))
@@ -256,6 +306,34 @@ function ServiceDialog({ service, onClose, onSaved }: { service: AdminService | 
               {({ id }) => <Input id={id} type="number" step={1} dir="ltr" value={form.sort_order} onChange={(e) => set('sort_order', e.target.value)} />}
             </Field>
           </div>
+          <fieldset className="flex flex-col gap-3 rounded-soft border border-line p-4" data-testid="options-editor">
+            <legend className="px-1 text-sm font-medium text-cocoa">{t('admin.services.options.title')}</legend>
+            <p className="text-xs text-cocoa-muted">{t('admin.services.options.hint')}</p>
+            {rows.map((r, i) => (
+              <div key={r.id ?? `new-${i}`} className="grid gap-2 rounded-soft bg-ivory/60 p-3 sm:grid-cols-[1fr_1fr_8rem_auto]" data-testid="option-row">
+                <Input aria-label={t('admin.services.fields.nameFr')} placeholder={t('admin.services.fields.nameFr')} lang="fr" dir="ltr" required maxLength={120} value={r.name_fr} onChange={(e) => setRow(i, { name_fr: e.target.value })} name="option_name_fr" />
+                <Input aria-label={t('admin.services.fields.nameAr')} placeholder={t('admin.services.fields.nameAr')} lang="ar" dir="rtl" required maxLength={120} value={r.name_ar} onChange={(e) => setRow(i, { name_ar: e.target.value })} name="option_name_ar" />
+                <Input aria-label={t('admin.services.fields.price')} placeholder={t('admin.services.fields.price')} type="number" min={0} step={1} required dir="ltr" value={r.price} onChange={(e) => setRow(i, { price: e.target.value })} name="option_price" />
+                <Button variant="ghost" size="sm" onClick={() => setRows((rs) => rs.filter((_, j) => j !== i))} aria-label={t('admin.services.options.remove')}>
+                  <X aria-hidden className="size-4" strokeWidth={1.5} />
+                </Button>
+                <div className="flex flex-wrap gap-x-6 sm:col-span-4">
+                  <Check label={t('admin.services.options.minimum')} checked={r.price_is_minimum} onChange={(v) => setRow(i, { price_is_minimum: v })} />
+                  <Check label={t('admin.services.fields.isActive')} checked={r.is_active} onChange={(v) => setRow(i, { is_active: v })} />
+                </div>
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              className="self-start"
+              onClick={() => setRows((rs) => [...rs, { name_fr: '', name_ar: '', price: '', price_is_minimum: false, is_active: true }])}
+              icon={<Plus aria-hidden className="size-4" strokeWidth={1.5} />}
+              data-testid="option-add"
+            >
+              {t('admin.services.options.add')}
+            </Button>
+          </fieldset>
           <div className="flex flex-col gap-3">
             <Check label={t('admin.services.fields.isActive')} checked={form.is_active} onChange={(v) => set('is_active', v)} />
             <Check label={t('admin.services.fields.isOnline')} checked={form.is_bookable_online} onChange={(v) => set('is_bookable_online', v)} />

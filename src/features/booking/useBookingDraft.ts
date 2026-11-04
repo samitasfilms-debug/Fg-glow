@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from 'react'
 export interface BookingDraft {
   step: number
   serviceIds: string[]
+  /** Supplements, each belonging to one of serviceIds. */
+  optionIds: string[]
   staffId: string | null
   day: string | null
   slot: string | null
@@ -16,6 +18,7 @@ const KEY = 'fg-glow.booking-draft.v1'
 export const emptyDraft: BookingDraft = {
   step: 0,
   serviceIds: [],
+  optionIds: [],
   staffId: null,
   day: null,
   slot: null,

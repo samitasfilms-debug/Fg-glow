@@ -217,5 +217,43 @@ insert into public.services (name_fr, name_ar, price_dzd, duration_minutes) valu
 select pg_temp.ok(public.admin_set_booking_enabled(true), 'booking opens once services + hours exist');
 select pg_temp.ok((select booking_enabled from public.salon_settings), 'booking_enabled stored');
 reset role;
+-- restore fixtures for the following tests / concurrency script
+update public.services set is_active = true where id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222');
+delete from public.working_hours where staff_id is null;
+insert into public.working_hours (staff_id, weekday, opens_at, closes_at) select null, d, '09:00', '18:00' from generate_series(0, 6) d;
+
+-- 15. Supplements (service options) ----------------------------------------------
+insert into public.service_options (id, service_id, name_fr, name_ar, price_dzd) values
+  ('aaaaaaaa-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111', 'Option A1', 'خيار أ1', 500),
+  ('aaaaaaaa-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111111', 'Option A2 inactive', 'خيار أ2', 700),
+  ('bbbbbbbb-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'Option B1', 'خيار ب1', 300);
+update public.service_options set is_active = false where id = 'aaaaaaaa-0000-0000-0000-000000000002';
+set role anon;
+select pg_temp.ok((select jsonb_array_length(s -> 'options') from jsonb_array_elements(public.get_public_catalog() -> 'services') s where s ->> 'id' = '11111111-1111-1111-1111-111111111111') = 1,
+  'catalogue lists only active options under their service');
+select pg_temp.expect_error(format($$select public.create_booking_request(jsonb_build_object('full_name', 'Opt Test', 'phone', '0550000031',
+  'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111'), 'option_ids', jsonb_build_array('bbbbbbbb-0000-0000-0000-000000000001'),
+  'starts_at', '%s'))$$, ((select d + 6 from t_ctx) + time '09:00') at time zone 'Africa/Algiers'), 'FGG_INVALID_OPTIONS');
+select pg_temp.ok(true, 'option of a service not chosen is refused');
+select pg_temp.expect_error(format($$select public.create_booking_request(jsonb_build_object('full_name', 'Opt Test', 'phone', '0550000032',
+  'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111'), 'option_ids', jsonb_build_array('aaaaaaaa-0000-0000-0000-000000000002'),
+  'starts_at', '%s'))$$, ((select d + 6 from t_ctx) + time '09:00') at time zone 'Africa/Algiers'), 'FGG_INVALID_OPTIONS');
+select pg_temp.ok(true, 'inactive option is refused');
+create temp table t_opt as select public.create_booking_request(jsonb_build_object('full_name', 'Opt Test', 'phone', '0550000033',
+  'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
+  'option_ids', jsonb_build_array('aaaaaaaa-0000-0000-0000-000000000001', 'bbbbbbbb-0000-0000-0000-000000000001'),
+  'starts_at', ((select d + 6 from t_ctx) + time '10:00') at time zone 'Africa/Algiers')) r;
+reset role;
+grant select on t_opt to anon, authenticated;
+set role anon;
+select pg_temp.ok(((select r from t_opt) ->> 'total_price_dzd')::int = 2000 + 1500 + 500 + 300, 'total includes supplements (server-side prices)');
+select pg_temp.ok(((select r from t_opt) ->> 'total_duration_minutes')::int = 90, 'supplements add no duration');
+reset role;
+select pg_temp.ok((select s.options -> 0 ->> 'name_fr' from public.appointment_services s join public.appointments a on a.id = s.appointment_id
+  where a.reference = (select r ->> 'reference' from t_opt) and s.service_id = '11111111-1111-1111-1111-111111111111') = 'Option A1', 'supplement snapshot stored on the booked service');
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
+select pg_temp.ok((public.admin_get_appointment((select a.id from public.appointments a where a.reference = (select r ->> 'reference' from t_opt))) -> 'services' -> 1 -> 'options' -> 0 ->> 'price_dzd')::int = 300, 'admin detail shows supplements');
+reset role;
 
 \echo ALL BOOKING ENGINE TESTS PASSED

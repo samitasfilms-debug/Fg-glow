@@ -8,11 +8,13 @@ import { ServiceCard } from '../components/ServiceCard'
 interface Props {
   services: CatalogService[]
   selectedIds: string[]
+  optionIds: string[]
   maxSelectable: number
   onChange: (ids: string[]) => void
+  onOptionsChange: (ids: string[]) => void
 }
 
-export function ServicesStep({ services, selectedIds, maxSelectable, onChange }: Props) {
+export function ServicesStep({ services, selectedIds, optionIds, maxSelectable, onChange, onOptionsChange }: Props) {
   const { t } = useTranslation()
   const [category, setCategory] = useState<string>('all')
 
@@ -71,6 +73,8 @@ export function ServicesStep({ services, selectedIds, maxSelectable, onChange }:
             selected={selectedIds.includes(s.id)}
             disabled={maxReached && maxSelectable > 1}
             onToggle={() => toggle(s.id)}
+            optionIds={optionIds}
+            onToggleOption={(id) => onOptionsChange(optionIds.includes(id) ? optionIds.filter((x) => x !== id) : [...optionIds, id])}
           />
         ))}
       </ul>

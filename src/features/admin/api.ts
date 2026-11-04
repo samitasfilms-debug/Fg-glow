@@ -67,7 +67,11 @@ export interface AppointmentDetail {
   created_at: string
   staff: { id: string; display_name: string } | null
   customer: { id: string; full_name: string; phone: string; email: string | null; completed_count: number; total_count: number }
-  services: (ServiceName & { price_dzd: number; duration_minutes: number })[]
+  services: (ServiceName & {
+    price_dzd: number
+    duration_minutes: number
+    options?: (ServiceName & { price_dzd: number; price_is_minimum: boolean })[]
+  })[]
   events: { from_status: AppointmentStatus | null; to_status: AppointmentStatus; note: string | null; details: Record<string, unknown> | null; created_at: string; actor: string | null }[]
   notifications: NotificationRow[]
 }

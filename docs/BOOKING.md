@@ -14,6 +14,8 @@ Migrations live in `supabase/migrations/` and are already applied to the `fg-glo
 | `20261101000001_booking_core.sql` | enums, tables, triggers, RLS policies, grants |
 | `20261101000002_booking_engine.sql` | availability engine, `create_booking_request`, admin status changes |
 | `20261101000003_booking_read_api.sql` | `get_public_catalog`, `admin_list_appointments`, `admin_get_appointment`, `get_my_profile` |
+| `20261104000002_beauty_categories.sql` | categories lashes, brows, manicure, pedicure, waxing |
+| `20261104000003_service_options.sql` | `service_options` (supplements per service, price only), snapshot `appointment_services.options`, catalogue / booking / admin detail updated |
 | `20261104000001_salon_setup_admin.sql` | `admin_save_salon_hours` (atomic weekly hours), `admin_set_booking_enabled` (refuses to open without services + hours) |
 
 Tables: `profiles`, `salon_settings` (one row), `services`, `staff`, `staff_services`, `working_hours`,
@@ -48,7 +50,9 @@ If at least one active staff member has services assigned, booking works per sta
 ## 2. Opening online booking (salon data — nothing has been invented)
 Everything is entered by the salon in the admin dashboard; nothing is seeded:
 1. **`/admin/prestations`** — add each service: category, name FR + AR, optional descriptions,
-   **real price in DZD**, duration in minutes, active / bookable online.
+   **real price in DZD**, duration in minutes, active / bookable online, and its **supplements**
+   (e.g. French +500 DA; "à partir de" for variable prices). Customers tick supplements under the
+   chosen service; the database recomputes the total. Supplements never change the duration.
 2. **`/admin/horaires`** — weekly opening hours (one or more ranges per day; a day with no range
    is closed), exceptional closures (whole days), booking rules (slot interval, buffer, capacity,
    minimum notice, how far ahead, pending hold, max services, salon WhatsApp number).

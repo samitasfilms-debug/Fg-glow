@@ -176,7 +176,7 @@ await test('submit creates a PENDING request with server-side prices and snapsho
   eq(rows[0].phone, '+213555000001', 'normalized phone')
   eq(new Date(rows[0].starts_at).toISOString(), slot, 'stored slot')
   eq(JSON.stringify(rows[0].svc), JSON.stringify([{ n: 'Service test A', p: 1000 }, { n: 'Service test B', p: 2500 }]), 'service snapshots')
-  eq(await page.evaluate(() => sessionStorage.getItem('fg-glow.booking-draft.v1')), JSON.stringify({ step: 0, serviceIds: [], staffId: null, day: null, slot: null, customer: { fullName: '', phone: '', email: '', notes: '' } }), 'draft cleared')
+  eq(await page.evaluate(() => sessionStorage.getItem('fg-glow.booking-draft.v1')), JSON.stringify({ step: 0, serviceIds: [], optionIds: [], staffId: null, day: null, slot: null, customer: { fullName: '', phone: '', email: '', notes: '' } }), 'draft cleared')
 })
 
 await test('a slot taken while the customer is on the summary is refused (back to step 2)', async (page) => {

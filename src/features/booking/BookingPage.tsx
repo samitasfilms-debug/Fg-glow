@@ -124,7 +124,12 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
   // Selection is always re-read from the database catalogue: a service removed
   // since the draft was saved silently disappears, prices are never cached.
   const selected = useMemo(() => services.filter((s) => draft.serviceIds.includes(s.id)), [services, draft.serviceIds])
-  const totalPrice = selected.reduce((n, s) => n + s.price_dzd, 0)
+  const selectedOptions = useMemo(
+    () => selected.flatMap((s) => (s.options ?? []).filter((o) => draft.optionIds.includes(o.id))),
+    [selected, draft.optionIds],
+  )
+  const totalPrice = selected.reduce((n, s) => n + s.price_dzd, 0) + selectedOptions.reduce((n, o) => n + o.price_dzd, 0)
+  const priceIsMinimum = selectedOptions.some((o) => o.price_is_minimum)
   const totalDuration = selected.reduce((n, s) => n + s.duration_minutes, 0)
   const maxSelectable = booking.allow_multiple_services ? Math.max(1, booking.max_services_per_booking) : 1
   const eligibleStaff = useMemo(
@@ -137,6 +142,9 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
     const ids = selected.map((s) => s.id)
     const patch: Partial<BookingDraft> = {}
     if (ids.length !== draft.serviceIds.length) patch.serviceIds = ids
+    // Supplements only survive while their service is selected (and still offered).
+    const optionIds = selectedOptions.map((o) => o.id)
+    if (optionIds.length !== draft.optionIds.length) patch.optionIds = optionIds
     if (draft.staffId && !eligibleStaff.some((p) => p.id === draft.staffId)) Object.assign(patch, { staffId: null, day: null, slot: null })
     if (draft.day && draft.day < today) Object.assign(patch, { day: null, slot: null })
     let step = draft.step
@@ -145,7 +153,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
     if (step > 2 && (!draft.customer.fullName || !draft.customer.phone)) step = 2
     if (step !== draft.step) patch.step = step
     if (Object.keys(patch).length) update(patch)
-  }, [selected, eligibleStaff, draft, today, update])
+  }, [selected, selectedOptions, eligibleStaff, draft, today, update])
 
   const goTo = (step: number) => {
     setError(null)
@@ -170,6 +178,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
         notes: draft.customer.notes.trim() || undefined,
         locale,
         service_ids: selected.map((s) => s.id),
+        option_ids: selectedOptions.map((o) => o.id),
         staff_id: draft.staffId,
         starts_at: draft.slot,
       })
@@ -183,7 +192,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
       const code = e instanceof BookingError ? e.code : 'generic'
       setError(code)
       if (code === 'FGG_SLOT_UNAVAILABLE' || code === 'FGG_STAFF_UNAVAILABLE') update({ step: 1, slot: null })
-      if (code === 'FGG_SERVICE_UNAVAILABLE' || code === 'FGG_INVALID_SERVICES') {
+      if (code === 'FGG_SERVICE_UNAVAILABLE' || code === 'FGG_INVALID_SERVICES' || code === 'FGG_INVALID_OPTIONS') {
         update({ step: 0, slot: null })
         onCatalogStale()
       }
@@ -224,8 +233,10 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
             <ServicesStep
               services={services}
               selectedIds={draft.serviceIds}
+              optionIds={draft.optionIds}
               maxSelectable={maxSelectable}
               onChange={(serviceIds) => update({ serviceIds, day: null, slot: null })}
+              onOptionsChange={(optionIds) => update({ optionIds })}
             />
           ) : draft.step === 1 ? (
             <DateTimeStep
@@ -247,6 +258,8 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
           ) : draft.slot ? (
             <ReviewStep
               services={selected}
+              optionIds={draft.optionIds}
+              priceIsMinimum={priceIsMinimum}
               staff={staff.find((p) => p.id === draft.staffId) ?? null}
               slot={draft.slot}
               customer={draft.customer}
@@ -261,7 +274,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
       {/* Navigation + running total. Sticky at the bottom on mobile. */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory/95 px-4 py-3 shadow-[0_-8px_24px_rgb(68_52_58/0.06)] backdrop-blur md:static md:z-auto md:rounded-card md:border md:bg-snow md:px-6 md:py-5 md:shadow-soft">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-8">
-          <SelectionSummary count={selected.length} totalPrice={totalPrice} totalDuration={totalDuration} className="md:flex-1" />
+          <SelectionSummary count={selected.length} totalPrice={totalPrice} totalDuration={totalDuration} priceIsMinimum={priceIsMinimum} className="md:flex-1" />
           <div className="flex items-center gap-3">
             {draft.step > 0 ? (
               <Button variant="ghost" onClick={() => goTo(draft.step - 1)} disabled={submitting} className="flex-1 md:flex-none">

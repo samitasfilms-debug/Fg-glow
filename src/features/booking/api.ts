@@ -5,6 +5,16 @@ import { supabase } from '@/lib/supabase'
  * prices, durations and availability are always computed by the database.
  */
 
+/** A supplement attached to one service (e.g. "French +500 DA"). Price only, no duration. */
+export interface ServiceOption {
+  id: string
+  name_fr: string
+  name_ar: string
+  price_dzd: number
+  /** "à partir de": the final amount is set at the salon. */
+  price_is_minimum: boolean
+}
+
 export interface CatalogService {
   id: string
   category: string
@@ -15,6 +25,7 @@ export interface CatalogService {
   image_url: string | null
   price_dzd: number
   duration_minutes: number
+  options?: ServiceOption[]
 }
 
 export interface CatalogStaff {
@@ -42,6 +53,7 @@ export interface BookingRequest {
   notes?: string
   locale: 'fr' | 'ar'
   service_ids: string[]
+  option_ids?: string[]
   staff_id?: string | null
   starts_at: string
 }

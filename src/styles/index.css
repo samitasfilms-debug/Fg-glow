@@ -20,26 +20,30 @@
  * Tailwind v4 turns each token into utilities (bg-blush, text-cocoa, font-display…).
  * ---------------------------------------------------------------------- */
 @theme {
-  /* Brand palette */
-  --color-blush: #e8c6cf;
-  --color-ivory: #fff9f5;
-  --color-rose: #d9a9b3;
-  --color-gold: #c6a477;
-  --color-cocoa: #44343a;
+  /* Brand palette — burgundy & beige.
+   * Token names are kept from the first palette so every component follows:
+   * blush/sand = beiges, rose = dusty rose, gold = burgundy accent,
+   * cocoa = deep burgundy (text and dark sections). */
+  --color-blush: #e8d6c1;
+  --color-ivory: #fbf7f1;
+  --color-rose: #c99a9c;
+  --color-gold: #8e2f42;
+  --color-cocoa: #3f1220;
   --color-snow: #ffffff;
 
   /* Supporting tints derived from the palette */
-  --color-blush-50: #fbf2f4;
-  --color-blush-100: #f6e5ea;
-  --color-ivory-200: #f7ede6;
-  --color-sand: #efe3d9;
-  --color-gold-soft: #e7d7c1;
-  /* AA-contrast gold for small text on ivory/white (4.6:1 on #FFF9F5) */
-  --color-gold-ink: #85663b;
-  --color-cocoa-soft: #6b5960;
-  --color-cocoa-muted: #8c7a80;
-  --color-line: #ead9d3;
-  --color-line-strong: #dcc5bd;
+  --color-blush-50: #faf4ec;
+  --color-blush-100: #f2e7d9;
+  --color-ivory-200: #f4eadd;
+  --color-sand: #ecdfcd;
+  /* Light beige, used for small accents on dark burgundy */
+  --color-gold-soft: #e6d3bc;
+  /* AA-contrast burgundy for small text on ivory/white */
+  --color-gold-ink: #6e1f30;
+  --color-cocoa-soft: #66404a;
+  --color-cocoa-muted: #84646b;
+  --color-line: #e8dacb;
+  --color-line-strong: #d8c3ae;
 
   /* Feedback (kept soft to stay on-brand) */
   --color-success: #4f7a5f;
@@ -75,9 +79,9 @@
   --radius-arch: 999px 999px 1.75rem 1.75rem;
 
   /* Shadows: warm, diffused, never grey */
-  --shadow-soft: 0 1px 2px rgb(68 52 58 / 0.04), 0 8px 24px -12px rgb(68 52 58 / 0.12);
-  --shadow-lift: 0 2px 6px rgb(68 52 58 / 0.05), 0 24px 48px -24px rgb(68 52 58 / 0.22);
-  --shadow-glow: 0 0 0 1px rgb(198 164 119 / 0.25), 0 18px 40px -20px rgb(198 164 119 / 0.45);
+  --shadow-soft: 0 1px 2px rgb(63 18 32 / 0.04), 0 8px 24px -12px rgb(63 18 32 / 0.12);
+  --shadow-lift: 0 2px 6px rgb(63 18 32 / 0.05), 0 24px 48px -24px rgb(63 18 32 / 0.22);
+  --shadow-glow: 0 0 0 1px rgb(142 47 66 / 0.22), 0 18px 40px -20px rgb(142 47 66 / 0.35);
 
   /* Motion */
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
@@ -167,7 +171,7 @@
     pointer-events: none;
     opacity: 0.18;
     mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.27 0 0 0 0 0.2 0 0 0 0 0.23 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.07 0 0 0 0 0.13 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     z-index: 1;
   }
 }

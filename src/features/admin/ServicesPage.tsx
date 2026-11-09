@@ -8,6 +8,8 @@ import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { Skeleton } from '@/components/ui/Spinner'
 import { BookingError } from '@/features/booking/api'
 import { useLocale } from '@/i18n/locale-context'
+import type { PriceMode } from '@/config/services'
+import { ServicePrice } from '@/features/booking/components/Price'
 import { formatDuration, formatPrice } from '@/lib/format'
 import { canManage, useAdminSession } from './session-context'
 import { SERVICE_CATEGORIES, setupApi, type AdminService, type AdminServiceOption, type ServiceInput } from './setup-api'
@@ -98,7 +100,9 @@ export function ServicesPage() {
                   </span>
                 </p>
                 <div className="flex flex-wrap items-center gap-2 text-sm text-cocoa-soft">
-                  <span className="font-medium text-cocoa">{formatPrice(s.price_dzd, locale)}</span>
+                  <span className="font-medium text-cocoa">
+                    <ServicePrice amount={s.price_dzd} mode={s.price_mode} />
+                  </span>
                   <span aria-hidden>·</span>
                   <span>{formatDuration(s.duration_minutes, locale)}</span>
                   <Badge tone={s.is_active ? 'success' : 'muted'}>{s.is_active ? t('admin.services.active') : t('admin.services.inactive')}</Badge>
@@ -143,12 +147,13 @@ export function ServicesPage() {
 }
 
 const emptyForm = {
-  category: 'other' as ServiceInput['category'],
+  category: 'manicure' as ServiceInput['category'],
   name_fr: '',
   name_ar: '',
   description_fr: '',
   description_ar: '',
   price: '',
+  price_mode: 'fixed' as PriceMode,
   duration: '',
   sort_order: '0',
   is_active: true,
@@ -197,6 +202,7 @@ function ServiceDialog({
               description_fr: service.description_fr ?? '',
               description_ar: service.description_ar ?? '',
               price: String(service.price_dzd),
+              price_mode: service.price_mode ?? 'fixed',
               duration: String(service.duration_minutes),
               sort_order: String(service.sort_order),
               is_active: service.is_active,
@@ -221,7 +227,8 @@ function ServiceDialog({
       name_ar: form.name_ar.trim(),
       description_fr: form.description_fr.trim() || null,
       description_ar: form.description_ar.trim() || null,
-      price_dzd: Number(form.price),
+      price_dzd: form.price_mode === 'quote' ? 0 : Number(form.price),
+      price_mode: form.price_mode,
       duration_minutes: Number(form.duration),
       sort_order: Number(form.sort_order) || 0,
       is_active: form.is_active,
@@ -270,7 +277,7 @@ function ServiceDialog({
           </h2>
           <Field label={t('admin.services.fields.category')} required>
             {({ id }) => (
-              <Select id={id} value={form.category} onChange={(e) => set('category', e.target.value as ServiceInput['category'])}>
+              <Select id={id} name="category" value={form.category} onChange={(e) => set('category', e.target.value as ServiceInput['category'])}>
                 {SERVICE_CATEGORIES.map((c) => (
                   <option key={c} value={c}>
                     {t(`services.categories.${c}`)}
@@ -286,11 +293,24 @@ function ServiceDialog({
             <Field label={t('admin.services.fields.nameAr')} required>
               {({ id }) => <Input id={id} name="name_ar" lang="ar" dir="rtl" required maxLength={120} value={form.name_ar} onChange={(e) => set('name_ar', e.target.value)} />}
             </Field>
-            <Field label={t('admin.services.fields.price')} required>
+            <Field label={t('admin.services.priceMode.label')} required>
               {({ id }) => (
-                <Input id={id} name="price" type="number" inputMode="numeric" min={0} step={1} required dir="ltr" value={form.price} onChange={(e) => set('price', e.target.value)} />
+                <Select id={id} name="price_mode" value={form.price_mode} onChange={(e) => set('price_mode', e.target.value as PriceMode)}>
+                  {(['fixed', 'from', 'quote'] as const).map((m) => (
+                    <option key={m} value={m}>
+                      {t(`admin.services.priceMode.${m}`)}
+                    </option>
+                  ))}
+                </Select>
               )}
             </Field>
+            {form.price_mode !== 'quote' ? (
+              <Field label={t('admin.services.fields.price')} required>
+                {({ id }) => (
+                  <Input id={id} name="price" type="number" inputMode="numeric" min={0} step={1} required dir="ltr" value={form.price} onChange={(e) => set('price', e.target.value)} />
+                )}
+              </Field>
+            ) : null}
             <Field label={t('admin.services.fields.duration')} required>
               {({ id }) => (
                 <Input id={id} name="duration" type="number" inputMode="numeric" min={5} max={600} step={5} required dir="ltr" value={form.duration} onChange={(e) => set('duration', e.target.value)} />

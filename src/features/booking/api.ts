@@ -1,3 +1,4 @@
+import type { PriceMode } from '@/config/services'
 import { supabase } from '@/lib/supabase'
 
 /**
@@ -24,6 +25,8 @@ export interface CatalogService {
   description_ar: string | null
   image_url: string | null
   price_dzd: number
+  /** fixed, "à partir de" (minimum) or "sur devis" (price_dzd = 0, agreed at the salon). */
+  price_mode?: PriceMode
   duration_minutes: number
   options?: ServiceOption[]
 }

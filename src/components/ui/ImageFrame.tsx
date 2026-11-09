@@ -79,10 +79,10 @@ export function ImageFrame({
 }
 
 const palettes = [
-  ['#F6E5EA', '#EBD3D9', '#E8C6CF'],
-  ['#F7EDE6', '#EFE3D9', '#E7D7C1'],
-  ['#FBF2F4', '#F1DCE1', '#D9A9B3'],
-  ['#EFE3D9', '#E8D2CB', '#D9A9B3'],
+  ['#F4EADD', '#EADAC5', '#E2CDB2'],
+  ['#F7EFE4', '#EDDCCB', '#DDBFB4'],
+  ['#FAF4EC', '#EFDDD3', '#C99A9C'],
+  ['#ECDFCD', '#E3CDBF', '#B9848B'],
 ] as const
 
 /** Abstract silk-and-strands artwork in brand tones, used until photography exists. */
@@ -100,13 +100,13 @@ export function ArtPlaceholder({ variant = 0, label, labelPosition = 'start' }: 
             <stop offset="100%" stopColor={c} />
           </linearGradient>
           <radialGradient id={`${id}-glow`} cx="0.7" cy="0.25" r="0.6">
-            <stop offset="0%" stopColor="#FFF9F5" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#FFF9F5" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FBF7F1" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#FBF7F1" stopOpacity="0" />
           </radialGradient>
         </defs>
         <rect width="400" height="500" fill={`url(#${id}-bg)`} />
         <rect width="400" height="500" fill={`url(#${id}-glow)`} />
-        <g fill="none" stroke="#C6A477" strokeLinecap="round">
+        <g fill="none" stroke="#8E2F42" strokeLinecap="round">
           {Array.from({ length: 9 }).map((_, i) => (
             <path
               key={i}

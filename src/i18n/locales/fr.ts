@@ -53,20 +53,14 @@ const fr = {
   },
   services: {
     categories: {
-      lashes: 'Extensions & rehaussement de cils',
-      brows: 'Sourcils',
       manicure: 'Manucure',
       pedicure: 'Pédicure',
+      lashes: 'Extensions de cils',
+      brows: 'Rehaussement cils & sourcils',
       waxing: 'Épilation',
-      brushing: 'Brushing',
-      haircut: 'Coupe femme',
-      coloring: 'Coloration',
-      balayage: 'Balayage / Mèches',
-      straightening: 'Lissage',
+      makeup: 'Maquillage',
+      hairstyling: 'Coiffure',
       care: 'Soins capillaires',
-      event: 'Coiffure événementielle',
-      bridal: 'Chignon / Mariage',
-      other: 'Autres prestations',
     },
   },
   home: {
@@ -85,7 +79,7 @@ const fr = {
     signature: {
       eyebrow: 'Prestations signature',
       title: 'L’expertise au service de votre style',
-      body: 'Découvrez nos univers de prestations. Les tarifs et durées seront publiés prochainement.',
+      body: 'Découvrez nos univers de prestations. Tarifs et durées sont affichés au moment de réserver.',
     },
     why: {
       eyebrow: 'L’expérience FG GLOW',
@@ -230,6 +224,10 @@ const fr = {
       title: 'Suppléments pour {{service}}',
       available: 'Suppléments disponibles : {{count}}',
       from: 'à partir de',
+    },
+    price: {
+      quote: 'Sur devis',
+      plusQuote: '+ prestation sur devis',
     },
     summary: {
       selection: 'Prestations sélectionnées : {{count}}',
@@ -394,6 +392,12 @@ const fr = {
         add: 'Ajouter un supplément',
         remove: 'Supprimer le supplément',
         minimum: 'Prix « à partir de »',
+      },
+      priceMode: {
+        label: 'Type de prix',
+        fixed: 'Prix fixe',
+        from: 'À partir de',
+        quote: 'Sur devis',
       },
       save: 'Enregistrer',
       saved: 'Prestation enregistrée.',

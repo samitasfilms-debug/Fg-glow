@@ -54,7 +54,7 @@ try {
   await page.waitForSelector('text=Aucune prestation pour le moment.')
   await page.click('[data-testid=service-add]')
   const form = page.locator('[data-testid=service-form]')
-  await form.locator('select').selectOption('brushing')
+  await form.locator('select[name=category]').selectOption('makeup')
   await form.locator('input[name=name_fr]').fill('Prestation e2e')
   await form.locator('input[name=name_ar]').fill('خدمة تجريبية')
   await form.locator('input[name=price]').fill('1800')

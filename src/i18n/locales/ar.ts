@@ -50,20 +50,14 @@ const ar: Translation = {
   },
   services: {
     categories: {
-      lashes: 'تمديد ورفع الرموش',
-      brows: 'الحواجب',
       manicure: 'مانيكير',
       pedicure: 'باديكير',
+      lashes: 'تمديد الرموش',
+      brows: 'رفع الرموش والحواجب',
       waxing: 'إزالة الشعر',
-      brushing: 'براشينغ',
-      haircut: 'قصّ الشعر',
-      coloring: 'صبغ الشعر',
-      balayage: 'بالاياج / ميش',
-      straightening: 'تمليس الشعر',
+      makeup: 'مكياج',
+      hairstyling: 'تسريح الشعر',
       care: 'علاجات الشعر',
-      event: 'تسريحات المناسبات',
-      bridal: 'شينيون / تسريحة العروس',
-      other: 'خدمات أخرى',
     },
   },
   home: {
@@ -81,7 +75,7 @@ const ar: Translation = {
     signature: {
       eyebrow: 'خدماتنا المميّزة',
       title: 'خبرة في خدمة أسلوبكِ',
-      body: 'اكتشفي عوالم خدماتنا. سيتم نشر الأسعار والمدد قريبًا.',
+      body: 'اكتشفي عوالم خدماتنا. تظهر الأسعار والمدد عند الحجز.',
     },
     why: {
       eyebrow: 'تجربة FG GLOW',
@@ -226,6 +220,10 @@ const ar: Translation = {
       title: 'إضافات لـ {{service}}',
       available: 'إضافات متاحة: {{count}}',
       from: 'ابتداءً من',
+    },
+    price: {
+      quote: 'حسب الطلب',
+      plusQuote: '+ خدمة يُحدَّد سعرها في الصالون',
     },
     summary: {
       selection: 'الخدمات المختارة: {{count}}',
@@ -389,6 +387,12 @@ const ar: Translation = {
         add: 'إضافة خيار',
         remove: 'حذف الخيار',
         minimum: 'سعر «ابتداءً من»',
+      },
+      priceMode: {
+        label: 'نوع السعر',
+        fixed: 'سعر ثابت',
+        from: 'ابتداءً من',
+        quote: 'حسب الطلب',
       },
       save: 'حفظ',
       saved: 'تم حفظ الخدمة.',

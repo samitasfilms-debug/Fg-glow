@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="g28" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8F1E7"/><stop offset="1" stop-color="#E4D3BB"/></linearGradient>
+<radialGradient id="g28h" cx=".72" cy=".2" r=".55"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+<linearGradient id="g28b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E2F42"/><stop offset="1" stop-color="#6B1E2E"/></linearGradient>
+</defs>
+<rect width="400" height="300" fill="url(#g28)"/>
+<circle cx="200" cy="158" r="118" fill="#FBF6EE" opacity=".55"/>
+<circle cx="200" cy="158" r="128" fill="none" stroke="#6B1E2E" stroke-opacity=".18" stroke-width="1"/>
+<rect width="400" height="300" fill="url(#g28h)"/>
+<path d="M350 134Q350 140 356 140Q350 140 350 146Q350 140 344 140Q350 140 350 134Z" fill="#6B1E2E" opacity="0.35"/><path d="M70 65.5Q70 70 74.5 70Q70 70 70 74.5Q70 70 65.5 70Q70 70 70 65.5Z" fill="#6B1E2E" opacity="0.35"/><path d="M86 245Q86 250 91 250Q86 250 86 255Q86 250 81 250Q86 250 86 245Z" fill="#6B1E2E" opacity="0.35"/>
+<g stroke-linecap="round" stroke-linejoin="round"><rect x="80" y="150" width="170" height="104" rx="14" fill="#FBF6EE" stroke="#6B1E2E" stroke-width="2.4"/><circle cx="112" cy="180" r="18" fill="#E6C9C1"/><circle cx="165" cy="180" r="18" fill="#C99A9C"/><circle cx="218" cy="180" r="18" fill="#A84A5C"/><circle cx="112" cy="226" r="18" fill="#DCC7AC"/><circle cx="165" cy="226" r="18" fill="#8E2F42"/><circle cx="218" cy="226" r="18" fill="#6B1E2E"/><g transform="translate(290 180) rotate(25) scale(1)"><rect x="-5" y="0" width="10" height="90" rx="5" fill="#6B1E2E"/><rect x="-7" y="-14" width="14" height="16" fill="#DCC7AC" stroke="#6B1E2E" stroke-width="1.5"/><path d="M-7 -14C-16 -30 -12 -52 0 -60C12 -52 16 -30 7 -14Z" fill="#C99A9C" stroke="#6B1E2E" stroke-width="1.5"/></g><g transform="translate(320 112) rotate(12) scale(0.85)"><rect x="-20" y="0" width="40" height="70" rx="5" fill="#6B1E2E"/><rect x="-16" y="-26" width="32" height="28" rx="3" fill="#DCC7AC" stroke="#6B1E2E" stroke-width="2"/><path d="M-12 -26V-52L12 -66V-26Z" fill="#A84A5C"/><path d="M-6 -30v-18" stroke="#fff" stroke-opacity=".5" stroke-width="3"/></g><path d="M110 90Q110 100 120 100Q110 100 110 110Q110 100 100 100Q110 100 110 90Z" fill="#6B1E2E" opacity="0.6"/></g>
+</svg>

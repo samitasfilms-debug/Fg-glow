@@ -10,10 +10,20 @@ export type ServiceCategoryKey = (typeof SERVICE_CATEGORIES)[number]
 /** How a price is shown: fixed, "à partir de" (minimum) or "sur devis" (agreed at the salon). */
 export type PriceMode = 'fixed' | 'from' | 'quote'
 
-/** The four categories highlighted on the homepage "Signature" section, with their illustration. */
-export const SIGNATURE_CATEGORIES: { key: ServiceCategoryKey; image: string }[] = [
-  { key: 'lashes', image: '/prestations/cils-oeil-de-biche.svg' },
-  { key: 'manicure', image: '/prestations/manucure-pose-capsules.svg' },
-  { key: 'makeup', image: '/prestations/maquillage-mariee.svg' },
-  { key: 'hairstyling', image: '/prestations/coiffure-wavy.svg' },
-]
+/** One photo per category (see src/config/photos.ts for the source and licence). */
+export const CATEGORY_IMAGES: Record<ServiceCategoryKey, string> = {
+  manicure: '/photos/site/cat-manicure.webp',
+  pedicure: '/photos/site/cat-pedicure.webp',
+  lashes: '/photos/site/cat-lashes.webp',
+  brows: '/photos/site/cat-brows.webp',
+  waxing: '/photos/site/cat-waxing.webp',
+  makeup: '/photos/site/cat-makeup.webp',
+  hairstyling: '/photos/site/cat-hairstyling.webp',
+  care: '/photos/site/cat-care.webp',
+}
+
+/** The four categories highlighted on the homepage "Signature" section. */
+export const SIGNATURE_CATEGORIES: { key: ServiceCategoryKey; image: string }[] = (['lashes', 'manicure', 'makeup', 'hairstyling'] as const).map((key) => ({
+  key,
+  image: CATEGORY_IMAGES[key],
+}))

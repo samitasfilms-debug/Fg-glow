@@ -104,9 +104,9 @@ const fr = {
       },
     },
     gallery: {
-      eyebrow: 'Transformations',
-      title: 'Nos créations',
-      body: 'Les réalisations du salon seront présentées ici dès leur publication.',
+      eyebrow: 'Inspirations',
+      title: 'L’univers beauté',
+      body: 'Ongles, regard, maquillage et coiffure : un aperçu en images des prestations proposées au salon.',
     },
     team: {
       eyebrow: 'Notre équipe',
@@ -158,7 +158,8 @@ const fr = {
     },
     gallery: {
       title: 'Galerie',
-      intro: 'Transformations, couleurs et coiffures signées FJ GLOW.',
+      intro: 'Ongles, regard, maquillage et coiffure : nos inspirations en images.',
+      credit: 'Photos d’illustration (Unsplash).',
     },
     team: {
       title: 'Notre équipe',

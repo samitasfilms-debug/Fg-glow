@@ -3,6 +3,7 @@ import { Parallax } from '@/components/motion/Parallax'
 import { Reveal } from '@/components/motion/Reveal'
 import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
+import { PHOTOS } from '@/config/photos'
 import { ImageFrame } from '@/components/ui/ImageFrame'
 import { Ornament } from '@/components/ui/Ornament'
 import { Section } from '@/components/ui/Section'
@@ -17,7 +18,7 @@ export function Intro() {
       <Container className="grid items-center gap-16 lg:grid-cols-12 lg:gap-10">
         <div className="relative lg:col-span-5">
           <Parallax offset={30}>
-            <ImageFrame shape="portrait" variant={1} className="max-w-md shadow-soft" />
+            <ImageFrame src={PHOTOS.intro} shape="portrait" className="max-w-md shadow-soft" />
           </Parallax>
         </div>
         <div className="flex flex-col gap-8 lg:col-span-6 lg:col-start-7">

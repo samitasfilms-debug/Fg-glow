@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Clock3, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ArtPlaceholder } from '@/components/ui/ImageFrame'
+import { servicePhoto } from '@/config/photos'
+import { CATEGORY_IMAGES, type ServiceCategoryKey } from '@/config/services'
 import { useLocale } from '@/i18n/locale-context'
 import { cn } from '@/lib/cn'
 import { formatDuration, formatPrice } from '@/lib/format'
@@ -24,6 +26,7 @@ export function ServiceCard({ service, selected, disabled, onToggle, index, opti
   const name = locale === 'ar' ? service.name_ar : service.name_fr
   const description = locale === 'ar' ? service.description_ar : service.description_fr
   const options = service.options ?? []
+  const photo = servicePhoto(service.image_url) ?? CATEGORY_IMAGES[service.category as ServiceCategoryKey] ?? null
 
   return (
     <motion.li
@@ -50,8 +53,8 @@ export function ServiceCard({ service, selected, disabled, onToggle, index, opti
           aria-describedby={`svc-${service.id}-meta`}
         />
         <span className="relative block size-24 shrink-0 overflow-hidden rounded-soft sm:aspect-[4/3] sm:size-auto sm:w-full sm:rounded-none">
-          {service.image_url ? (
-            <img src={service.image_url} alt="" width={400} height={300} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          {photo ? (
+            <img src={photo} alt="" width={400} height={300} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
             <ArtPlaceholder variant={index} />
           )}

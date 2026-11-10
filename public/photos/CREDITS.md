@@ -1,0 +1,76 @@
+# Photo credits
+
+All photos come from [Unsplash](https://unsplash.com) and are used under the free [Unsplash License](https://unsplash.com/license) (commercial use allowed, no attribution required; credited here anyway). They illustrate the services and are not photos of the salon, its team or its clients.
+
+| File | Unsplash photo |
+|---|---|
+| prestations/brow-lift.webp | https://images.unsplash.com/photo-1698335107935-e2c8287c4947 |
+| prestations/brow-lift-epilation-coloration.webp | https://images.unsplash.com/photo-1581003250898-36050e78fcd3 |
+| prestations/cils-depose.webp | https://images.unsplash.com/photo-1735151226446-1d364b4adc2f |
+| prestations/cils-oeil-de-biche.webp | https://images.unsplash.com/photo-1564278692313-b2d65996fc93 |
+| prestations/cils-pose-mixte.webp | https://images.unsplash.com/photo-1639629509821-c54cdd984227 |
+| prestations/cils-pose-naturelle.webp | https://images.unsplash.com/photo-1548902378-2ec44c906391 |
+| prestations/cils-remplissage.webp | https://images.unsplash.com/photo-1589710751893-f9a6770ad71b |
+| prestations/cils-volume-russe.webp | https://images.unsplash.com/photo-1567629307995-b9f33097bd30 |
+| prestations/coiffure-brushing.webp | https://images.unsplash.com/photo-1580618672591-eb180b1a973f |
+| prestations/coiffure-invitee.webp | https://images.unsplash.com/photo-1672788709547-6d7f239972c3 |
+| prestations/coiffure-mariee.webp | https://images.unsplash.com/photo-1549236177-77e8271c34b6 |
+| prestations/coiffure-wavy.webp | https://images.unsplash.com/photo-1785456283212-338f5bc44d50 |
+| prestations/epilation-aisselles.webp | https://images.unsplash.com/photo-1530011863720-d68ebd17107b |
+| prestations/epilation-bras-complets.webp | https://images.unsplash.com/photo-1700760934166-4c766d708139 |
+| prestations/epilation-demi-bras.webp | https://images.unsplash.com/photo-1619451427882-6aaaded0cc61 |
+| prestations/epilation-demi-jambes.webp | https://images.unsplash.com/photo-1561541262-9906ede3d338 |
+| prestations/epilation-dos.webp | https://images.unsplash.com/photo-1534198730876-4bcab78c52f4 |
+| prestations/epilation-jambes-completes.webp | https://images.unsplash.com/photo-1587179790059-5f5d937fb87d |
+| prestations/epilation-moustache.webp | https://images.unsplash.com/photo-1731514771613-991a02407132 |
+| prestations/epilation-sourcils.webp | https://images.unsplash.com/photo-1519415387722-a1c3bbef716c |
+| prestations/epilation-visage.webp | https://images.unsplash.com/photo-1761718210089-ba3bb5ccb54f |
+| prestations/manucure-depose.webp | https://images.unsplash.com/photo-1775500835259-d3b3f6d6e2f2 |
+| prestations/manucure-gel.webp | https://images.unsplash.com/photo-1610992015762-45dca7fa3a85 |
+| prestations/manucure-pose-capsules.webp | https://images.unsplash.com/photo-1772322586785-3a34772cbc61 |
+| prestations/manucure-remplissage.webp | https://images.unsplash.com/photo-1632345031435-8727f6897d53 |
+| prestations/manucure-semi-permanent.webp | https://images.unsplash.com/photo-1607779097040-26e80aa78e66 |
+| prestations/maquillage-charge.webp | https://images.unsplash.com/photo-1487412947147-5cebf100ffc2 |
+| prestations/maquillage-mariee.webp | https://images.unsplash.com/photo-1631549424057-403e75d68e2f |
+| prestations/maquillage-simple.webp | https://images.unsplash.com/photo-1709477542170-f11ee7d471a0 |
+| prestations/pedicure-depose.webp | https://images.unsplash.com/photo-1787651344170-c2f81514934d |
+| prestations/pedicure-gel.webp | https://images.unsplash.com/photo-1664643411326-6c589531be3c |
+| prestations/pedicure-semi-permanent.webp | https://images.unsplash.com/photo-1707725238063-0c54fb6963d1 |
+| prestations/rehaussement-cils.webp | https://images.unsplash.com/photo-1674049406467-824ea37c7184 |
+| prestations/rehaussement-cils-coloration.webp | https://images.unsplash.com/photo-1651839633408-3fccd671b832 |
+| prestations/soin-cheveux-courts.webp | https://images.unsplash.com/photo-1634449571010-02389ed0f9b0 |
+| prestations/soin-cheveux-extra-longs.webp | https://images.unsplash.com/photo-1554519934-e32b1629d9ee |
+| prestations/soin-cheveux-longs.webp | https://images.unsplash.com/photo-1522337360788-8b13dee7a37e |
+| site/banner-about.webp | https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f |
+| site/banner-contact.webp | https://images.unsplash.com/photo-1634449862841-8c6e970117e5 |
+| site/banner-gallery.webp | https://images.unsplash.com/photo-1764333746348-1df13b3a4aae |
+| site/banner-services.webp | https://images.unsplash.com/photo-1515688594390-b649af70d282 |
+| site/banner-team.webp | https://images.unsplash.com/photo-1695527081848-1e46c06e6458 |
+| site/cat-brows.webp | https://images.unsplash.com/photo-1674049406179-d7bf2c263e71 |
+| site/cat-care.webp | https://images.unsplash.com/photo-1602549179763-ce6c9df961b7 |
+| site/cat-hairstyling.webp | https://images.unsplash.com/photo-1734111719430-fe4a3973f8af |
+| site/cat-lashes.webp | https://images.unsplash.com/photo-1587910234573-d6fc84743bc8 |
+| site/cat-makeup.webp | https://images.unsplash.com/photo-1594465919760-441fe5908ab0 |
+| site/cat-manicure.webp | https://images.unsplash.com/photo-1769687209448-025548dfca8b |
+| site/cat-pedicure.webp | https://images.unsplash.com/photo-1662132090920-060bba5cdf18 |
+| site/cat-waxing.webp | https://images.unsplash.com/photo-1716363120131-2aa0e8bb5fba |
+| site/gallery-01.webp | https://images.unsplash.com/photo-1604654894610-df63bc536371 |
+| site/gallery-02.webp | https://images.unsplash.com/photo-1718720410649-7524fcb0f0a5 |
+| site/gallery-03.webp | https://images.unsplash.com/photo-1560869713-7d0a29430803 |
+| site/gallery-04.webp | https://images.unsplash.com/photo-1580870069867-74c57ee1bb07 |
+| site/gallery-05.webp | https://images.unsplash.com/photo-1599206676335-193c82b13c9e |
+| site/gallery-06.webp | https://images.unsplash.com/photo-1549236177-f9b0031756eb |
+| site/gallery-07.webp | https://images.unsplash.com/photo-1487412912498-0447578fcca8 |
+| site/gallery-08.webp | https://images.unsplash.com/photo-1656774446450-56a427a184b4 |
+| site/gallery-09.webp | https://images.unsplash.com/photo-1560264641-1b5191cc63e2 |
+| site/gallery-10.webp | https://images.unsplash.com/photo-1586220742613-b731f66f7743 |
+| site/gallery-11.webp | https://images.unsplash.com/photo-1604902396830-aca29e19b067 |
+| site/gallery-12.webp | https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9 |
+| site/hero.webp | https://images.unsplash.com/photo-1636153279424-cb5d1e00f5a2 |
+| site/hero-detail.webp | https://images.unsplash.com/photo-1619607146034-5a05296c8f9a |
+| site/home-gallery-1.webp | https://images.unsplash.com/photo-1481068164146-e8beb686f4d2 |
+| site/home-gallery-2.webp | https://images.unsplash.com/photo-1610992015732-2449b76344bc |
+| site/home-gallery-3.webp | https://images.unsplash.com/photo-1596462502278-27bfdc403348 |
+| site/home-gallery-4.webp | https://images.unsplash.com/photo-1570172619644-dfd03ed5d881 |
+| site/intro.webp | https://images.unsplash.com/photo-1709477542149-f4e0e21d590b |
+| site/contact.webp | https://images.unsplash.com/photo-1626383137804-ff908d2753a2 |

@@ -1,4 +1,3 @@
-import { MapPin } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ContactDetails, SocialLinks } from '@/components/layout/ContactDetails'
 import { Reveal } from '@/components/motion/Reveal'
@@ -6,6 +5,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { Section } from '@/components/ui/Section'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { PHOTOS } from '@/config/photos'
 import { site } from '@/config/site'
 import { useLocalePath } from '@/hooks/useLocalePath'
 
@@ -47,20 +47,7 @@ export function ContactPreview() {
                 className="absolute inset-0 h-full w-full border-0 grayscale-[0.3]"
               />
             ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-8 text-center">
-                <svg aria-hidden className="absolute inset-0 h-full w-full text-line-strong" preserveAspectRatio="none">
-                  <defs>
-                    <pattern id="map-grid" width="44" height="44" patternUnits="userSpaceOnUse">
-                      <path d="M 44 0 L 0 0 0 44" fill="none" stroke="currentColor" strokeWidth="0.6" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#map-grid)" />
-                </svg>
-                <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-snow text-gold-ink shadow-soft">
-                  <MapPin className="size-6" strokeWidth={1.25} />
-                </span>
-                <p className="relative max-w-xs text-sm text-cocoa-soft">{t('home.contact.mapPending')}</p>
-              </div>
+              <img src={PHOTOS.contact} alt="" width={1200} height={800} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
             )}
           </div>
         </Reveal>

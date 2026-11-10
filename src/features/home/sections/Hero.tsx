@@ -1,10 +1,9 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { ImageIcon } from 'lucide-react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScriptMonogram } from '@/components/brand/ScriptMonogram'
 import { ButtonLink } from '@/components/ui/Button'
-import { ArtPlaceholder } from '@/components/ui/ImageFrame'
+import { PHOTOS } from '@/config/photos'
 import { site } from '@/config/site'
 import { useLocalePath } from '@/hooks/useLocalePath'
 import { useLocale } from '@/i18n/locale-context'
@@ -101,12 +100,8 @@ export function Hero() {
             transition={{ duration: 1.8, ease: EASE_LUXE, delay: 0.3 }}
           >
             <motion.div className="h-[114%] w-full" style={reduce ? undefined : { y: imageY }} initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 2.4, ease: EASE_LUXE, delay: 0.3 }}>
-              <ArtPlaceholder variant={0} />
+              <img src={PHOTOS.hero} alt="" width={1400} height={1867} fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
             </motion.div>
-            <span className="absolute end-5 bottom-5 z-[2] inline-flex items-center gap-1.5 rounded-full bg-ivory/80 px-3 py-1 text-[0.6875rem] font-medium tracking-wide text-cocoa-soft backdrop-blur">
-              <ImageIcon aria-hidden className="size-3" strokeWidth={1.75} />
-              {t('placeholder.imageComing')}
-            </span>
           </motion.div>
 
           <motion.div
@@ -116,7 +111,7 @@ export function Hero() {
             transition={{ duration: 1.2, ease: EASE_LUXE, delay: 1.4 }}
           >
             <div className="aspect-square">
-              <ArtPlaceholder variant={2} />
+              <img src={PHOTOS.heroDetail} alt="" width={700} height={700} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </div>
           </motion.div>
 

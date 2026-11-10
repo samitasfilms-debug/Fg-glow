@@ -5,7 +5,7 @@ import { SERVICES } from './data.mjs'
 
 const q = (v) => (v === null ? 'null' : `'${String(v).replace(/'/g, "''")}'`)
 const rows = SERVICES.map((x, i) =>
-  `    (${q(x.category)}, ${q(x.name_fr)}, ${q(x.name_ar)}, ${x.price_dzd}, ${q(x.price_mode)}, ${x.duration_minutes}, ${i + 1}, ${q(`/prestations/${x.slug}.svg`)}, array[${x.match.map(q).join(', ')}], ${q(JSON.stringify(x.options))}::jsonb)`,
+  `    (${q(x.category)}, ${q(x.name_fr)}, ${q(x.name_ar)}, ${x.price_dzd}, ${q(x.price_mode)}, ${x.duration_minutes}, ${i + 1}, ${q(`/photos/prestations/${x.slug}.webp`)}, array[${x.match.map(q).join(', ')}], ${q(JSON.stringify(x.options))}::jsonb)`,
 ).join(',\n')
 
 process.stdout.write(`-- FJ GLOW — nouveaux prix (liste du salon du 09/11/2026), images et catégories.

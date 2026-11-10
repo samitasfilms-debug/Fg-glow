@@ -2,6 +2,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { ImageIcon } from 'lucide-react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ScriptMonogram } from '@/components/brand/ScriptMonogram'
 import { ButtonLink } from '@/components/ui/Button'
 import { ArtPlaceholder } from '@/components/ui/ImageFrame'
 import { site } from '@/config/site'
@@ -46,23 +47,29 @@ export function Hero() {
             {site.name} — {site.slogan.fr}
           </h1>
 
-          <div aria-hidden dir="ltr" className="flex flex-wrap items-baseline gap-x-[0.18em] font-display text-display-xl text-cocoa rtl:justify-end" style={{ fontFamily: 'var(--font-display)' }}>
-            {['FJ', 'GLOW'].map((word, wi) => (
-              <span key={word} className="inline-flex overflow-hidden pb-[0.06em]">
-                {word.split('').map((ch, ci) => (
-                  <motion.span
-                    key={ci}
-                    className={wi === 0 ? 'font-semibold tracking-[0.04em]' : 'font-light tracking-[0.14em]'}
-                    initial={{ y: '105%' }}
-                    animate={{ y: '0%' }}
-                    transition={{ duration: 1.2, ease: EASE_LUXE, delay: 0.5 + (wi * 2 + ci) * 0.07 }}
-                    style={{ display: 'inline-block' }}
-                  >
-                    {ch}
-                  </motion.span>
-                ))}
-              </span>
-            ))}
+          <div aria-hidden dir="ltr" className="flex flex-nowrap items-baseline gap-x-[0.12em] font-display text-display-xl text-cocoa rtl:justify-end" style={{ fontFamily: 'var(--font-display)' }}>
+            <motion.span
+              className="relative top-[0.27em] inline-block shrink-0"
+              initial={{ opacity: 0, y: '18%' }}
+              animate={{ opacity: 1, y: '0%' }}
+              transition={{ duration: 1.4, ease: EASE_LUXE, delay: 0.5 }}
+            >
+              <ScriptMonogram className="h-[0.95em] w-auto" />
+            </motion.span>
+            <span className="inline-flex shrink-0 overflow-hidden pb-[0.06em]">
+              {'GLOW'.split('').map((ch, ci) => (
+                <motion.span
+                  key={ci}
+                  className="font-light tracking-[0.14em]"
+                  initial={{ y: '105%' }}
+                  animate={{ y: '0%' }}
+                  transition={{ duration: 1.2, ease: EASE_LUXE, delay: 0.5 + (2 + ci) * 0.07 }}
+                  style={{ display: 'inline-block' }}
+                >
+                  {ch}
+                </motion.span>
+              ))}
+            </span>
           </div>
 
           <motion.div {...rise(1.05)} className="flex flex-col gap-2">

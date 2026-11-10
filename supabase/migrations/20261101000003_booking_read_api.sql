@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — read API used by the website and the admin dashboard.
+-- FJ GLOW — read API used by the website and the admin dashboard.
 -- Everything the UI reads goes through these functions, so filtering and
 -- authorization happen in the database, never in the browser.
 -- =============================================================================

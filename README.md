@@ -1,4 +1,4 @@
-# FG GLOW — Premium women's hair salon platform
+# FJ GLOW — Premium women's hair salon platform
 
 React + Vite + TypeScript + Tailwind CSS v4 + Framer Motion, bilingual French / Arabic (RTL).
 Backend (Phase 05): Supabase (PostgreSQL, Auth, Storage, Edge Functions). Hosting: Vercel.

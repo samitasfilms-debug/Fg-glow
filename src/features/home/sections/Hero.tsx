@@ -47,7 +47,7 @@ export function Hero() {
           </h1>
 
           <div aria-hidden dir="ltr" className="flex flex-wrap items-baseline gap-x-[0.18em] font-display text-display-xl text-cocoa rtl:justify-end" style={{ fontFamily: 'var(--font-display)' }}>
-            {['FG', 'GLOW'].map((word, wi) => (
+            {['FJ', 'GLOW'].map((word, wi) => (
               <span key={word} className="inline-flex overflow-hidden pb-[0.06em]">
                 {word.split('').map((ch, ci) => (
                   <motion.span

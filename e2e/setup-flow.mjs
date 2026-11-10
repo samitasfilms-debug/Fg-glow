@@ -3,9 +3,9 @@
 // dashboard, opens online booking, a customer books in Arabic, the admin
 // confirms. Data typed here is fictitious and lives only in the test database.
 //
-//   E2E_DB=fgg_e2e_empty e2e/setup-db.sh --accounts-only
-//   E2E_DB=fgg_e2e_empty E2E_PORT=4401 e2e/start-server.sh
-//   E2E_DB=fgg_e2e_empty E2E_BASE=http://127.0.0.1:4401 node e2e/setup-flow.mjs
+//   E2E_DB=fjg_e2e_empty e2e/setup-db.sh --accounts-only
+//   E2E_DB=fjg_e2e_empty E2E_PORT=4401 e2e/start-server.sh
+//   E2E_DB=fjg_e2e_empty E2E_BASE=http://127.0.0.1:4401 node e2e/setup-flow.mjs
 import { createRequire } from 'node:module'
 import { mkdirSync } from 'node:fs'
 import pg from 'pg'
@@ -15,7 +15,7 @@ const { chromium } = require('playwright')
 const BASE = process.env.E2E_BASE ?? 'http://127.0.0.1:4401'
 const SHOTS = process.env.E2E_SHOTS ?? 'e2e/screenshots'
 mkdirSync(SHOTS, { recursive: true })
-const db = new pg.Client({ database: process.env.E2E_DB ?? 'fgg_e2e_empty' })
+const db = new pg.Client({ database: process.env.E2E_DB ?? 'fjg_e2e_empty' })
 await db.connect()
 
 function assert(cond, msg) {

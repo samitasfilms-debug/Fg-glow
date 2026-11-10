@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — service supplements (options)
+-- FJ GLOW — service supplements (options)
 -- A supplement belongs to one service (e.g. "French +500 DA" on a manicure).
 -- Customers tick supplements under a chosen service; the database recomputes
 -- the total and snapshots the chosen supplements on the appointment.

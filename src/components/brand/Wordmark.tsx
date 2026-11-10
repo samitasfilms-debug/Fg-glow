@@ -35,7 +35,7 @@ export function Wordmark({ className, size = 'md', tone = 'dark' }: WordmarkProp
       )}
       style={{ fontFamily: 'var(--font-display)' }}
     >
-      <span className="font-semibold tracking-[0.06em]">FG</span>
+      <span className="font-semibold tracking-[0.06em]">FJ</span>
       <span aria-hidden className="relative -top-[0.32em] size-[0.16em] shrink-0 rotate-45 bg-gold" />
       <span className="font-light tracking-[var(--tracking-wordmark)]">GLOW</span>
     </span>

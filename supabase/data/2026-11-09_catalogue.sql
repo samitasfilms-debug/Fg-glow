@@ -1,4 +1,4 @@
--- FG GLOW — nouveaux prix (liste du salon du 09/11/2026), images et catégories.
+-- FJ GLOW — nouveaux prix (liste du salon du 09/11/2026), images et catégories.
 -- À exécuter UNE fois dans le SQL Editor de Supabase, APRÈS la migration 20261109000001_catalog_v2.sql.
 -- Les prestations existantes sont mises à jour sur place (mêmes identifiants, l'historique des
 -- rendez-vous ne change pas), les nouvelles sont ajoutées, celles qui ne sont plus à la carte sont retirées.

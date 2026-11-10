@@ -6,10 +6,10 @@
  */
 const fr = {
   meta: {
-    defaultTitle: 'FG GLOW — Salon de coiffure pour femmes',
-    titleTemplate: '{{page}} · FG GLOW',
+    defaultTitle: 'FJ GLOW — Salon de coiffure pour femmes',
+    titleTemplate: '{{page}} · FJ GLOW',
     description:
-      'FG GLOW, salon de coiffure premium dédié aux femmes. Coupe, coloration, balayage, soins et coiffures d’exception. Réservez votre rendez-vous en ligne.',
+      'FJ GLOW, salon de coiffure premium dédié aux femmes. Coupe, coloration, balayage, soins et coiffures d’exception. Réservez votre rendez-vous en ligne.',
   },
   brand: {
     sloganTranslation: '',
@@ -18,7 +18,7 @@ const fr = {
     skipToContent: 'Aller au contenu principal',
     mainNav: 'Navigation principale',
     footerNav: 'Navigation du pied de page',
-    homeLink: 'FG GLOW — accueil',
+    homeLink: 'FJ GLOW — accueil',
     language: 'Langue',
   },
   nav: {
@@ -73,7 +73,7 @@ const fr = {
       eyebrow: 'La maison',
       title: 'Un moment rien qu’à vous',
       body:
-        'Chez FG GLOW, la coiffure est un art de l’attention. Nous prenons le temps de vous écouter, de comprendre votre style et de créer une beauté qui vous ressemble.',
+        'Chez FJ GLOW, la coiffure est un art de l’attention. Nous prenons le temps de vous écouter, de comprendre votre style et de créer une beauté qui vous ressemble.',
       quote: 'Beauty. Elegance. Confidence.',
     },
     signature: {
@@ -82,7 +82,7 @@ const fr = {
       body: 'Découvrez nos univers de prestations. Tarifs et durées sont affichés au moment de réserver.',
     },
     why: {
-      eyebrow: 'L’expérience FG GLOW',
+      eyebrow: 'L’expérience FJ GLOW',
       title: 'Pourquoi nous choisir',
       items: {
         listen: {
@@ -144,13 +144,13 @@ const fr = {
     explore: 'Explorer',
     visit: 'Nous rendre visite',
     follow: 'Suivez-nous',
-    rights: '© {{year}} FG GLOW. Tous droits réservés.',
+    rights: '© {{year}} FJ GLOW. Tous droits réservés.',
     onSitePayment: 'Paiement sur place uniquement',
   },
   pages: {
     about: {
       title: 'À propos',
-      intro: 'L’histoire, la philosophie et l’univers de FG GLOW.',
+      intro: 'L’histoire, la philosophie et l’univers de FJ GLOW.',
     },
     services: {
       title: 'Nos prestations',
@@ -158,7 +158,7 @@ const fr = {
     },
     gallery: {
       title: 'Galerie',
-      intro: 'Transformations, couleurs et coiffures signées FG GLOW.',
+      intro: 'Transformations, couleurs et coiffures signées FJ GLOW.',
     },
     team: {
       title: 'Notre équipe',
@@ -274,7 +274,7 @@ const fr = {
       payment: 'Paiement',
       paymentOnSite: 'Sur place, au salon. Aucun paiement en ligne.',
       pendingNotice:
-        'Votre demande sera étudiée par le salon. Le rendez-vous n’est confirmé qu’après validation par FG GLOW.',
+        'Votre demande sera étudiée par le salon. Le rendez-vous n’est confirmé qu’après validation par FJ GLOW.',
     },
     success: {
       title: 'Demande envoyée',
@@ -330,7 +330,7 @@ const fr = {
     },
     login: {
       title: 'Connexion',
-      subtitle: 'Accès réservé à l’équipe FG GLOW.',
+      subtitle: 'Accès réservé à l’équipe FJ GLOW.',
       email: 'E-mail',
       password: 'Mot de passe',
       submit: 'Se connecter',
@@ -513,14 +513,14 @@ const fr = {
   },
   whatsappMessages: {
     booking_confirmed:
-      'Bonjour {{name}}, votre rendez-vous chez FG GLOW du {{date}} à {{time}} est confirmé (réf. {{reference}}). À très bientôt !',
+      'Bonjour {{name}}, votre rendez-vous chez FJ GLOW du {{date}} à {{time}} est confirmé (réf. {{reference}}). À très bientôt !',
     booking_rejected:
       'Bonjour {{name}}, nous sommes désolées : nous ne pouvons pas accepter votre demande du {{date}} à {{time}} (réf. {{reference}}). N’hésitez pas à choisir un autre créneau.',
     reschedule_proposed:
       'Bonjour {{name}}, le créneau demandé n’est pas disponible. Nous vous proposons le {{date}} à {{time}} (réf. {{reference}}). Ce nouvel horaire vous convient-il ?',
     booking_cancelled:
       'Bonjour {{name}}, votre rendez-vous du {{date}} à {{time}} (réf. {{reference}}) a été annulé. Contactez-nous pour en fixer un nouveau.',
-    booking_created: 'Nouvelle demande FG GLOW : {{name}}, le {{date}} à {{time}} (réf. {{reference}}).',
+    booking_created: 'Nouvelle demande FJ GLOW : {{name}}, le {{date}} à {{time}} (réf. {{reference}}).',
   },
   validation: {
     required: 'Ce champ est obligatoire.',

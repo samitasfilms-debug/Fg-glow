@@ -23,7 +23,7 @@ export function PageShell({ page }: { page: ShellPage }) {
       <Seo title={t(`pages.${page}.title`)} description={t(`pages.${page}.intro`)} />
       <Section tone="ivory" className="pt-header">
         <Container className="flex flex-col gap-14 pt-12 md:pt-20">
-          <SectionHeading as="h1" eyebrow="FG GLOW" title={t(`pages.${page}.title`)} lead={t(`pages.${page}.intro`)} />
+          <SectionHeading as="h1" eyebrow="FJ GLOW" title={t(`pages.${page}.title`)} lead={t(`pages.${page}.intro`)} />
           <EmptyState
             icon={<Sparkles className="size-7" strokeWidth={1.25} />}
             title={t('pages.inProgress')}

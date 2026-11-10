@@ -30,7 +30,7 @@ export function Seo({ title, description, noindex }: SeoProps) {
       <meta name="description" content={desc} />
       {noindex ? <meta name="robots" content="noindex,nofollow" /> : null}
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="FG GLOW" />
+      <meta property="og:site_name" content="FJ GLOW" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={desc} />
       <meta property="og:locale" content={locale === 'ar' ? 'ar_DZ' : 'fr_DZ'} />

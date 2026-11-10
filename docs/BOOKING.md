@@ -1,13 +1,13 @@
-# FG GLOW — Booking system
+# FJ GLOW — Booking system
 
 Customers send a booking **request** from `/fr/reservation` or `/ar/reservation`.
 `/booking` and `/:lang/booking` redirect there. Every request is created as **PENDING**:
 the customer is told clearly that it is not confirmed until the salon approves it in `/admin`.
 Payment is on site only.
 
-## 1. Database (Supabase project `fg-glow`)
+## 1. Database (Supabase project `fg-glow`, technical name kept)
 
-Migrations live in `supabase/migrations/` and are already applied to the `fg-glow` project:
+Migrations live in `supabase/migrations/` and are already applied to the `fg-glow` Supabase project:
 
 | File | Contents |
 |---|---|
@@ -17,6 +17,7 @@ Migrations live in `supabase/migrations/` and are already applied to the `fg-glo
 | `20261104000002_beauty_categories.sql` | categories lashes, brows, manicure, pedicure, waxing |
 | `20261104000003_service_options.sql` | `service_options` (supplements per service, price only), snapshot `appointment_services.options`, catalogue / booking / admin detail updated |
 | `20261104000001_salon_setup_admin.sql` | `admin_save_salon_hours` (atomic weekly hours), `admin_set_booking_enabled` (refuses to open without services + hours) |
+| `20261110000001_brand_fj.sql` | brand rename: new booking references start with `FJ-` (older `FG-` references stay valid) |
 
 Tables: `profiles`, `salon_settings` (one row), `services`, `staff`, `staff_services`, `working_hours`,
 `blocked_slots`, `customers`, `appointments`, `appointment_services` (price/name snapshots),
@@ -32,7 +33,7 @@ Tables: `profiles`, `salon_settings` (one row), `services`, `staff`, `staff_serv
     checks services are active, **recomputes prices and durations from the database**, takes a
     schedule lock, checks the slot again (hours, closures, buffer, notice, max advance, staff or
     salon capacity, other appointments), enforces a per-phone daily limit and duplicate detection,
-    then stores the appointment as `pending` with a reference `FG-YYMMDD-XXXX`.
+    then stores the appointment as `pending` with a reference `FJ-YYMMDD-XXXX` (bookings made before migration `20261110000001_brand_fj.sql` keep their `FG-` reference).
   - `admin_update_appointment` (salon managers only): confirm / reject / propose another time /
     cancel / completed / no-show, with allowed-transition checks, a fresh availability check,
     history + audit log + notification record.
@@ -96,8 +97,8 @@ history, WhatsApp notifications, and actions allowed for the current status
   message was sent; it records only that the link was opened.
 - **Later (WhatsApp Cloud API):** `supabase/functions/whatsapp-dispatch/index.ts` is written but
   **not deployed and not tested against Meta**. To activate: create a Meta Business app, approve
-  templates `fg_glow_booking_confirmed`, `fg_glow_booking_rejected`, `fg_glow_reschedule_proposed`,
-  `fg_glow_booking_cancelled` (4 body parameters: name, date, time, reference), set secrets
+  templates `fj_glow_booking_confirmed`, `fj_glow_booking_rejected`, `fj_glow_reschedule_proposed`,
+  `fj_glow_booking_cancelled` (4 body parameters: name, date, time, reference), set secrets
   `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `DISPATCH_SECRET`, deploy the function,
   schedule it with Supabase cron, then set `salon_settings.whatsapp_api_enabled = true`.
 
@@ -118,9 +119,9 @@ VITE_SUPABASE_URL=http://127.0.0.1:4400 VITE_SUPABASE_ANON_KEY=test npx vite bui
 e2e/start-server.sh                 # serves the build + emulates Supabase RPC/Auth over the real SQL
 node e2e/run.mjs                    # 16 Playwright scenarios (FR, AR, mobile, admin)
 # From an empty salon: admin adds a service + hours, opens booking, customer books (AR), admin confirms
-E2E_DB=fgg_e2e_empty e2e/setup-db.sh --accounts-only
-E2E_DB=fgg_e2e_empty e2e/start-server.sh
-E2E_DB=fgg_e2e_empty node e2e/setup-flow.mjs
+E2E_DB=fjg_e2e_empty e2e/setup-db.sh --accounts-only
+E2E_DB=fjg_e2e_empty e2e/start-server.sh
+E2E_DB=fjg_e2e_empty node e2e/setup-flow.mjs
 ```
 `e2e/server.mjs` is a local stand-in for PostgREST/GoTrue: it runs each RPC as `anon` or
 `authenticated` with `auth.uid()` set, so grants, RLS and functions behave as on Supabase,

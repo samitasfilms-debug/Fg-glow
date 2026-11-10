@@ -5,19 +5,22 @@ import { Button, ButtonLink } from '@/components/ui/Button'
 import { useLocalePath } from '@/hooks/useLocalePath'
 import { useLocale } from '@/i18n/locale-context'
 import { formatLongDate, formatTime } from '@/lib/datetime'
-import { formatDuration, formatPrice } from '@/lib/format'
+import { formatDuration } from '@/lib/format'
 import { EASE_LUXE } from '@/lib/motion'
 import type { BookingResult } from '../api'
+import { TotalPrice } from './Price'
 
 interface Props {
   result: BookingResult
   name: string
   phone: string
+  priceIsMinimum?: boolean
+  hasQuote?: boolean
   onRestart: () => void
 }
 
 /** Shown after the request is stored. Makes it explicit that it is NOT confirmed yet. */
-export function SuccessView({ result, name, phone, onRestart }: Props) {
+export function SuccessView({ result, name, phone, priceIsMinimum = false, hasQuote = false, onRestart }: Props) {
   const { t } = useTranslation()
   const { locale } = useLocale()
   const to = useLocalePath()
@@ -69,7 +72,9 @@ export function SuccessView({ result, name, phone, onRestart }: Props) {
           </div>
           <div>
             <dt className="text-cocoa-muted">{t('booking.summary.total')}</dt>
-            <dd className="text-cocoa">{formatPrice(result.total_price_dzd, locale)}</dd>
+            <dd className="text-cocoa">
+              <TotalPrice amount={result.total_price_dzd} isMinimum={priceIsMinimum} hasQuote={hasQuote} />
+            </dd>
           </div>
         </dl>
       </div>

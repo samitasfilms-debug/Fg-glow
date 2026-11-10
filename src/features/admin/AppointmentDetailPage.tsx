@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/Spinner'
 import { BookingError } from '@/features/booking/api'
 import { useLocale } from '@/i18n/locale-context'
 import { formatLongDate, formatShortDateTime, formatTime } from '@/lib/datetime'
+import { ServicePrice, TotalPrice } from '@/features/booking/components/Price'
 import { formatDuration, formatPrice } from '@/lib/format'
 import { ACTIONS_BY_STATUS, adminApi, type AdminAction, type AppointmentDetail } from './api'
 import { ActionDialog } from './ActionDialog'
@@ -160,7 +161,9 @@ export function AppointmentDetailPage() {
                     <span className="text-cocoa">
                       {svcName(s)} <span className="text-xs text-cocoa-muted">· {formatDuration(s.duration_minutes, locale)}</span>
                     </span>
-                    <span className="tabular-nums">{formatPrice(s.price_dzd, locale)}</span>
+                    <span className="tabular-nums">
+                      <ServicePrice amount={s.price_dzd} mode={s.price_mode} />
+                    </span>
                   </span>
                   {(s.options ?? []).map((o, j) => (
                     <span key={j} className="flex justify-between gap-4 ps-3 text-cocoa-soft" data-testid="detail-option">
@@ -176,7 +179,13 @@ export function AppointmentDetailPage() {
             </ul>
             <p className="mt-2 flex justify-between border-t border-line-strong pt-2 text-sm font-medium">
               <span>{t('booking.summary.total')}</span>
-              <span className="tabular-nums">{formatPrice(a.total_price_dzd, locale)}</span>
+              <span className="tabular-nums">
+                <TotalPrice
+                  amount={a.total_price_dzd}
+                  isMinimum={a.services.some((s) => s.price_mode === 'from' || (s.options ?? []).some((o) => o.price_is_minimum))}
+                  hasQuote={a.services.some((s) => s.price_mode === 'quote')}
+                />
+              </span>
             </p>
             {a.staff ? (
               <p className="mt-3 text-sm text-cocoa-soft">

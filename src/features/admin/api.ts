@@ -1,3 +1,4 @@
+import type { PriceMode } from '@/config/services'
 import { supabase } from '@/lib/supabase'
 import { BookingError } from '@/features/booking/api'
 
@@ -69,6 +70,7 @@ export interface AppointmentDetail {
   customer: { id: string; full_name: string; phone: string; email: string | null; completed_count: number; total_count: number }
   services: (ServiceName & {
     price_dzd: number
+    price_mode?: PriceMode
     duration_minutes: number
     options?: (ServiceName & { price_dzd: number; price_is_minimum: boolean })[]
   })[]

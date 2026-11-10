@@ -256,4 +256,27 @@ set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
 select pg_temp.ok((public.admin_get_appointment((select a.id from public.appointments a where a.reference = (select r ->> 'reference' from t_opt))) -> 'services' -> 1 -> 'options' -> 0 ->> 'price_dzd')::int = 300, 'admin detail shows supplements');
 reset role;
 
+-- 16. Price modes ("à partir de" / "sur devis") -----------------------------------
+update public.services set price_mode = 'from' where id = '11111111-1111-1111-1111-111111111111';
+update public.services set price_mode = 'quote', price_dzd = 0 where id = '22222222-2222-2222-2222-222222222222';
+set role anon;
+select pg_temp.ok((select s ->> 'price_mode' from jsonb_array_elements(public.get_public_catalog() -> 'services') s where s ->> 'id' = '22222222-2222-2222-2222-222222222222') = 'quote',
+  'catalogue exposes the price mode');
+create temp table t_mode as select public.create_booking_request(jsonb_build_object('full_name', 'Mode Test', 'phone', '0550000041',
+  'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
+  'starts_at', ((select d + 7 from t_ctx) + time '10:00') at time zone 'Africa/Algiers')) r;
+reset role;
+grant select on t_mode to anon, authenticated;
+select pg_temp.ok(((select r from t_mode) ->> 'total_price_dzd')::int = 2000, 'quote service adds nothing to the total');
+select pg_temp.ok((select string_agg(s.price_mode, ',' order by s.position) from public.appointment_services s join public.appointments a on a.id = s.appointment_id
+  where a.reference = (select r ->> 'reference' from t_mode)) = 'from,quote', 'price mode snapshotted on the booked services');
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000a1';
+select pg_temp.ok((public.admin_get_appointment((select a.id from public.appointments a where a.reference = (select r ->> 'reference' from t_mode))) -> 'services' -> 1 ->> 'price_mode') = 'quote', 'admin detail shows the price mode');
+reset role;
+select pg_temp.expect_error($$update public.services set price_mode = 'free' where id = '11111111-1111-1111-1111-111111111111'$$, 'check');
+select pg_temp.ok(true, 'unknown price mode refused');
+update public.services set price_mode = 'fixed' where id = '11111111-1111-1111-1111-111111111111';
+update public.services set price_mode = 'fixed', price_dzd = 2500 where id = '22222222-2222-2222-2222-222222222222';
+
 \echo ALL BOOKING ENGINE TESTS PASSED

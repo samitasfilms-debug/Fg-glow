@@ -6,6 +6,7 @@ import { useLocale } from '@/i18n/locale-context'
 import { cn } from '@/lib/cn'
 import { formatDuration, formatPrice } from '@/lib/format'
 import type { CatalogService } from '../api'
+import { ServicePrice } from './Price'
 
 interface ServiceCardProps {
   service: CatalogService
@@ -50,7 +51,7 @@ export function ServiceCard({ service, selected, disabled, onToggle, index, opti
         />
         <span className="relative block size-24 shrink-0 overflow-hidden rounded-soft sm:aspect-[4/3] sm:size-auto sm:w-full sm:rounded-none">
           {service.image_url ? (
-            <img src={service.image_url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={service.image_url} alt="" width={400} height={300} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
           ) : (
             <ArtPlaceholder variant={index} />
           )}
@@ -74,7 +75,9 @@ export function ServiceCard({ service, selected, disabled, onToggle, index, opti
               <Clock3 aria-hidden className="size-3.5" strokeWidth={1.5} />
               {formatDuration(service.duration_minutes, locale)}
             </span>
-            <span className="font-medium text-cocoa">{formatPrice(service.price_dzd, locale)}</span>
+            <span className="font-medium text-cocoa" data-testid="service-price">
+              <ServicePrice amount={service.price_dzd} mode={service.price_mode} />
+            </span>
           </span>
           <span className="sr-only">{selected ? t('booking.services.selected') : t('booking.services.select')}</span>
         </span>

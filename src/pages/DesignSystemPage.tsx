@@ -11,13 +11,13 @@ import { SERVICE_CATEGORIES } from '@/config/services'
 import { makeSchemas } from '@/lib/validation'
 
 const SWATCHES = [
-  ['Blush Pink', '#E8C6CF', 'bg-blush'],
-  ['Ivory', '#FFF9F5', 'bg-ivory'],
-  ['Rose Nude', '#D9A9B3', 'bg-rose'],
-  ['Champagne Gold', '#C6A477', 'bg-gold'],
-  ['Dark Brown', '#44343A', 'bg-cocoa'],
-  ['Soft White', '#FFFFFF', 'bg-snow'],
-  ['Gold ink (text)', '#85663B', 'bg-gold-ink'],
+  ['Beige', '#E8D6C1', 'bg-blush'],
+  ['Ivoire', '#FBF7F1', 'bg-ivory'],
+  ['Vieux rose', '#C99A9C', 'bg-rose'],
+  ['Bordeaux', '#8E2F42', 'bg-gold'],
+  ['Bordeaux profond', '#3F1220', 'bg-cocoa'],
+  ['Blanc', '#FFFFFF', 'bg-snow'],
+  ['Bordeaux (texte)', '#6E1F30', 'bg-gold-ink'],
 ] as const
 
 const STATUSES = ['pending', 'confirmed', 'rejected', 'reschedule_requested', 'cancelled', 'completed', 'no_show'] as const
@@ -64,7 +64,7 @@ export function DesignSystemPage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <Button>Primary</Button>
-            <Button variant="gold" withArrow>Gold</Button>
+            <Button variant="gold" withArrow>Bordeaux</Button>
             <Button variant="outline">Outline</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="link" withArrow>Link</Button>

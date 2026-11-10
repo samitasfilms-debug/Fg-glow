@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocale } from '@/i18n/locale-context'
 import { formatLongDate, formatTime } from '@/lib/datetime'
 import { formatDuration, formatPrice } from '@/lib/format'
+import { ServicePrice, TotalPrice } from '../components/Price'
 import type { CatalogService, CatalogStaff } from '../api'
 import type { BookingDraft } from '../useBookingDraft'
 
@@ -11,6 +12,7 @@ interface Props {
   services: CatalogService[]
   optionIds: string[]
   priceIsMinimum: boolean
+  hasQuote: boolean
   staff: CatalogStaff | null
   slot: string
   customer: BookingDraft['customer']
@@ -19,7 +21,7 @@ interface Props {
   onEdit: (step: number) => void
 }
 
-export function ReviewStep({ services, optionIds, priceIsMinimum, staff, slot, customer, totalPrice, totalDuration, onEdit }: Props) {
+export function ReviewStep({ services, optionIds, priceIsMinimum, hasQuote, staff, slot, customer, totalPrice, totalDuration, onEdit }: Props) {
   const { t } = useTranslation()
   const { locale } = useLocale()
   const name = (s: CatalogService) => (locale === 'ar' ? s.name_ar : s.name_fr)
@@ -50,7 +52,9 @@ export function ReviewStep({ services, optionIds, priceIsMinimum, staff, slot, c
                       </span>
                     ))}
                 </span>
-                <span className="shrink-0 tabular-nums text-cocoa">{formatPrice(s.price_dzd, locale)}</span>
+                <span className="shrink-0 tabular-nums text-cocoa">
+                  <ServicePrice amount={s.price_dzd} mode={s.price_mode} />
+                </span>
               </li>
             ))}
           </ul>
@@ -62,8 +66,7 @@ export function ReviewStep({ services, optionIds, priceIsMinimum, staff, slot, c
               </span>
             </span>
             <span className="font-display text-3xl text-cocoa" data-testid="review-total">
-              {priceIsMinimum ? <span className="me-1 text-base text-cocoa-soft">{t('booking.options.from')}</span> : null}
-              {formatPrice(totalPrice, locale)}
+              <TotalPrice amount={totalPrice} isMinimum={priceIsMinimum} hasQuote={hasQuote} prefixClassName="text-base" />
             </span>
           </div>
         </Block>

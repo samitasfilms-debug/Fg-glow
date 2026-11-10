@@ -87,8 +87,26 @@ await test('services come from the database; totals update with multi-select', a
   eq(await text(page, '[data-testid=total-duration]'), '1 h 30', 'A+B duration')
   await page.getByText('Service test B', { exact: true }).click()
   eq(await text(page, '[data-testid=total-price]'), 'Total 1 000 DA', 'after removing B')
-  await page.getByRole('radio', { name: 'Coloration' }).click()
+  await page.getByRole('radio', { name: 'Maquillage' }).click()
   eq(await page.locator('[data-testid=booking-flow] li input[type=checkbox]').count(), 1, 'category filter')
+})
+
+await test('prices "à partir de" and "sur devis" are shown and totalled honestly', async (page) => {
+  await db.query(`update services set price_mode = 'from' where id = '11111111-1111-1111-1111-111111111111'`)
+  await db.query(`update services set price_mode = 'quote', price_dzd = 0 where id = '22222222-2222-2222-2222-222222222222'`)
+  try {
+    await page.goto(`${BASE}/fr/reservation`)
+    await page.waitForSelector('[data-testid=booking-flow]')
+    const prices = (await page.locator('[data-testid=service-price]').allInnerTexts()).map((p) => p.replace(/\s+/g, ' ').trim())
+    assert(prices.includes('à partir de 1 000 DA') && prices.includes('Sur devis'), `card prices: ${prices.join(' | ')}`)
+    await page.getByText('Service test B', { exact: true }).click()
+    eq(await text(page, '[data-testid=total-price]'), 'Total Sur devis', 'quote only')
+    await page.getByText('Service test A', { exact: true }).click()
+    eq(await text(page, '[data-testid=total-price]'), 'Total à partir de 1 000 DA + prestation sur devis', 'from + quote')
+  } finally {
+    await db.query(`update services set price_mode = 'fixed' where id = '11111111-1111-1111-1111-111111111111'`)
+    await db.query(`update services set price_mode = 'fixed', price_dzd = 2500 where id = '22222222-2222-2222-2222-222222222222'`)
+  }
 })
 
 await test('cannot continue without a service', async (page) => {

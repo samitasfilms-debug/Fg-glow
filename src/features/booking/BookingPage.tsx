@@ -117,7 +117,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
   const { draft, update, reset } = useBookingDraft()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [done, setDone] = useState<{ result: BookingResult; name: string; phone: string } | null>(null)
+  const [done, setDone] = useState<{ result: BookingResult; name: string; phone: string; priceIsMinimum: boolean; hasQuote: boolean } | null>(null)
   const topRef = useRef<HTMLDivElement>(null)
   const today = salonToday(booking.timezone)
 
@@ -129,7 +129,8 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
     [selected, draft.optionIds],
   )
   const totalPrice = selected.reduce((n, s) => n + s.price_dzd, 0) + selectedOptions.reduce((n, o) => n + o.price_dzd, 0)
-  const priceIsMinimum = selectedOptions.some((o) => o.price_is_minimum)
+  const priceIsMinimum = selected.some((s) => s.price_mode === 'from') || selectedOptions.some((o) => o.price_is_minimum)
+  const hasQuote = selected.some((s) => s.price_mode === 'quote')
   const totalDuration = selected.reduce((n, s) => n + s.duration_minutes, 0)
   const maxSelectable = booking.allow_multiple_services ? Math.max(1, booking.max_services_per_booking) : 1
   const eligibleStaff = useMemo(
@@ -182,7 +183,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
         staff_id: draft.staffId,
         starts_at: draft.slot,
       })
-      setDone({ result, name: draft.customer.fullName.trim(), phone: draft.customer.phone.trim() })
+      setDone({ result, name: draft.customer.fullName.trim(), phone: draft.customer.phone.trim(), priceIsMinimum, hasQuote })
       reset()
       requestAnimationFrame(() => {
         topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -204,7 +205,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
   if (done) {
     return (
       <div ref={topRef} className="scroll-mt-32">
-        <SuccessView result={done.result} name={done.name} phone={done.phone} onRestart={() => setDone(null)} />
+        <SuccessView result={done.result} name={done.name} phone={done.phone} priceIsMinimum={done.priceIsMinimum} hasQuote={done.hasQuote} onRestart={() => setDone(null)} />
       </div>
     )
   }
@@ -260,6 +261,7 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
               services={selected}
               optionIds={draft.optionIds}
               priceIsMinimum={priceIsMinimum}
+              hasQuote={hasQuote}
               staff={staff.find((p) => p.id === draft.staffId) ?? null}
               slot={draft.slot}
               customer={draft.customer}
@@ -272,9 +274,9 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
       </AnimatePresence>
 
       {/* Navigation + running total. Sticky at the bottom on mobile. */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory/95 px-4 py-3 shadow-[0_-8px_24px_rgb(68_52_58/0.06)] backdrop-blur md:static md:z-auto md:rounded-card md:border md:bg-snow md:px-6 md:py-5 md:shadow-soft">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-ivory/95 px-4 py-3 shadow-[0_-8px_24px_rgb(63_18_32/0.06)] backdrop-blur md:static md:z-auto md:rounded-card md:border md:bg-snow md:px-6 md:py-5 md:shadow-soft">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-8">
-          <SelectionSummary count={selected.length} totalPrice={totalPrice} totalDuration={totalDuration} priceIsMinimum={priceIsMinimum} className="md:flex-1" />
+          <SelectionSummary count={selected.length} totalPrice={totalPrice} totalDuration={totalDuration} priceIsMinimum={priceIsMinimum} hasQuote={hasQuote} className="md:flex-1" />
           <div className="flex items-center gap-3">
             {draft.step > 0 ? (
               <Button variant="ghost" onClick={() => goTo(draft.step - 1)} disabled={submitting} className="flex-1 md:flex-none">

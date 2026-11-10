@@ -9,8 +9,8 @@ const base =
   'disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-cocoa text-ivory shadow-soft hover:bg-[#3a2b31] hover:shadow-lift',
-  gold: 'bg-gold text-cocoa shadow-soft hover:bg-[#bd9a6c] hover:shadow-glow',
+  primary: 'bg-cocoa text-ivory shadow-soft hover:bg-[#2e0c17] hover:shadow-lift',
+  gold: 'bg-gold text-ivory shadow-soft hover:bg-gold-ink hover:shadow-glow',
   outline: 'border border-cocoa/25 text-cocoa hover:border-cocoa hover:bg-cocoa hover:text-ivory',
   ghost: 'text-cocoa hover:bg-blush-100',
   light: 'border border-ivory/40 text-ivory backdrop-blur-sm hover:bg-ivory hover:text-cocoa',

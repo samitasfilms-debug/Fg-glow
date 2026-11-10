@@ -59,6 +59,17 @@ Everything is entered by the salon in the admin dashboard; nothing is seeded:
 3. **`/admin/horaires` → "Ouvrir la réservation en ligne"**. The button stays disabled (and the
    database refuses) until at least one active service and opening hours exist.
 
+**Price types.** Each service has a price type: fixed, **« à partir de »** (the price is a minimum;
+totals show "à partir de") or **« sur devis »** (price 0, shown as "Sur devis" and not counted in the
+total). The type is snapshotted on each booked service.
+
+**Price list of 9 Nov 2026.** `supabase/data/2026-11-09_catalogue.sql` (generated from
+`scripts/catalog/data.mjs` by `node scripts/catalog/gen-sql.mjs`) applies the salon's list after the
+`20261109000001_catalog_v2.sql` migration: existing services are updated in place, new ones added,
+ART supplements set on the manicure services. Durations of the new services are estimates to check.
+Each service has an illustration in `public/prestations/<slug>.svg` (original vector artwork,
+`node scripts/catalog/gen-images.mjs`), referenced by `services.image_url`.
+
 Until then `/reservation` says online booking is unavailable and links to the contact page
 (no "coming soon" wording). Removing all hours closes booking automatically.
 

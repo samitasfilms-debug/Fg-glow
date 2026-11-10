@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn'
 const control =
   'w-full rounded-soft border bg-snow px-4 text-[0.9375rem] text-cocoa placeholder:text-cocoa-muted/70 ' +
   'transition-[border-color,box-shadow] duration-300 ease-luxe ' +
-  'focus:outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgb(198_164_119/0.15)] ' +
+  'focus:outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgb(142_47_66/0.14)] ' +
   'disabled:cursor-not-allowed disabled:bg-ivory-200 disabled:opacity-70'
 
 const stateClass = (invalid?: boolean) =>

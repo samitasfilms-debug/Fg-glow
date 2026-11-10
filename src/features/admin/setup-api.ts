@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { BookingError } from '@/features/booking/api'
-import type { ServiceCategoryKey } from '@/config/services'
+import type { PriceMode, ServiceCategoryKey } from '@/config/services'
 
 /**
  * Salon set-up (services, opening hours, closures, booking rules).
@@ -19,6 +19,7 @@ export interface AdminService {
   description_fr: string | null
   description_ar: string | null
   price_dzd: number
+  price_mode: PriceMode
   duration_minutes: number
   is_active: boolean
   is_bookable_online: boolean
@@ -80,7 +81,7 @@ function fail(error: { message?: string } | null): never {
 }
 
 const SERVICE_COLUMNS =
-  'id, category, name_fr, name_ar, description_fr, description_ar, price_dzd, duration_minutes, is_active, is_bookable_online, sort_order'
+  'id, category, name_fr, name_ar, description_fr, description_ar, price_dzd, price_mode, duration_minutes, is_active, is_bookable_online, sort_order'
 const SETTINGS_COLUMNS =
   'booking_enabled, allow_multiple_services, max_services_per_booking, slot_interval_minutes, buffer_minutes, salon_capacity, min_notice_minutes, max_advance_days, pending_hold_hours, whatsapp_number'
 

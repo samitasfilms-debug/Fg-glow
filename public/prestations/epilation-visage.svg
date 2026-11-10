@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="g18" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6EDE3"/><stop offset="1" stop-color="#E6D2C2"/></linearGradient>
+<radialGradient id="g18h" cx=".72" cy=".2" r=".55"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+<linearGradient id="g18b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E2F42"/><stop offset="1" stop-color="#6B1E2E"/></linearGradient>
+</defs>
+<rect width="400" height="300" fill="url(#g18)"/>
+<circle cx="200" cy="158" r="118" fill="#FBF6EE" opacity=".55"/>
+<circle cx="200" cy="158" r="128" fill="none" stroke="#6B1E2E" stroke-opacity=".18" stroke-width="1"/>
+<rect width="400" height="300" fill="url(#g18h)"/>
+<path d="M64 230Q64 236 70 236Q64 236 64 242Q64 236 58 236Q64 236 64 230Z" fill="#6B1E2E" opacity="0.35"/><path d="M334 51Q334 58 341 58Q334 58 334 65Q334 58 327 58Q334 58 334 51Z" fill="#6B1E2E" opacity="0.35"/><path d="M46 116.5Q46 120 49.5 120Q46 120 46 123.5Q46 120 42.5 120Q46 120 46 116.5Z" fill="#6B1E2E" opacity="0.35"/>
+<g stroke-linecap="round" stroke-linejoin="round"><path d="M200 54C150 54 128 96 130 150C132 206 166 248 200 248C234 248 268 206 270 150C272 96 250 54 200 54Z" fill="#F1E2D2" stroke="#6B1E2E" stroke-width="2.4"/><path d="M146 160C150 196 172 226 200 232C228 226 250 196 254 160C240 176 220 182 200 182C180 182 160 176 146 160Z" fill="#A84A5C" fill-opacity=".28" stroke="none"/><path d="M150 96C170 74 230 74 250 96C230 90 170 90 150 96Z" fill="#A84A5C" fill-opacity=".28" stroke="none"/><path d="M160 140q16 10 30 0M210 140q16 10 30 0" fill="none" stroke="#6B1E2E" stroke-width="2.2"/><path d="M155 120q18-12 36-4M209 116q18-8 36 4" fill="none" stroke="#6B1E2E" stroke-width="4"/><path d="M200 150q-6 22 4 26" fill="none" stroke="#6B1E2E" stroke-opacity=".6" stroke-width="2"/><path d="M180 206q20-10 40 0q-20 16-40 0Z" fill="#A84A5C"/><g transform="translate(330 160) rotate(25)"><rect x="-7" y="-50" width="14" height="92" rx="7" fill="#DCC7AC" stroke="#6B1E2E" stroke-width="2"/><path d="M-7 -30h14v-13a7 7 0 0 0-14 0Z" fill="#8E2F42" opacity=".8"/></g></g>
+</svg>

@@ -1,7 +1,8 @@
 import { Clock3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useLocale } from '@/i18n/locale-context'
-import { formatDuration, formatPrice } from '@/lib/format'
+import { formatDuration } from '@/lib/format'
+import { TotalPrice } from './Price'
 import { cn } from '@/lib/cn'
 
 /** Running total (price + duration), computed from database values. */
@@ -10,12 +11,14 @@ export function SelectionSummary({
   totalPrice,
   totalDuration,
   priceIsMinimum = false,
+  hasQuote = false,
   className,
 }: {
   count: number
   totalPrice: number
   totalDuration: number
   priceIsMinimum?: boolean
+  hasQuote?: boolean
   className?: string
 }) {
   const { t } = useTranslation()
@@ -31,8 +34,7 @@ export function SelectionSummary({
         </span>
         <span className="font-display text-2xl text-cocoa" data-testid="total-price">
           <span className="sr-only">{t('booking.summary.total')} </span>
-          {priceIsMinimum ? <span className="me-1 text-sm text-cocoa-soft">{t('booking.options.from')}</span> : null}
-          {formatPrice(totalPrice, locale)}
+          <TotalPrice amount={totalPrice} isMinimum={priceIsMinimum} hasQuote={hasQuote} prefixClassName="text-sm" />
         </span>
       </span>
     </div>

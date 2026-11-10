@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs>
+<linearGradient id="g23" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7EFE4"/><stop offset="1" stop-color="#EADAC5"/></linearGradient>
+<radialGradient id="g23h" cx=".72" cy=".2" r=".55"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+<linearGradient id="g23b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E2F42"/><stop offset="1" stop-color="#6B1E2E"/></linearGradient>
+</defs>
+<rect width="400" height="300" fill="url(#g23)"/>
+<circle cx="200" cy="158" r="118" fill="#FBF6EE" opacity=".55"/>
+<circle cx="200" cy="158" r="128" fill="none" stroke="#6B1E2E" stroke-opacity=".18" stroke-width="1"/>
+<rect width="400" height="300" fill="url(#g23h)"/>
+<path d="M58 55Q58 62 65 62Q58 62 58 69Q58 62 51 62Q58 62 58 55Z" fill="#6B1E2E" opacity="0.35"/><path d="M338 232Q338 238 344 238Q338 238 338 244Q338 238 332 238Q338 238 338 232Z" fill="#6B1E2E" opacity="0.35"/><path d="M352 66Q352 70 356 70Q352 70 352 74Q352 70 348 70Q352 70 352 66Z" fill="#6B1E2E" opacity="0.35"/>
+<g stroke-linecap="round" stroke-linejoin="round"><path d="M30 126C110 112 170 116 230 124C262 128 290 132 312 130C330 118 352 112 368 116C378 118 378 128 366 130L350 134C366 138 384 142 384 152C384 166 362 172 340 168C326 166 316 162 306 160C276 162 262 172 230 174C170 180 110 184 30 186Z" fill="#F1E2D2" stroke="#6B1E2E" stroke-width="2.4"/><path d="M30 126C110 112 170 116 230 124C262 128 290 132 312 130C330 118 352 112 368 116C378 118 378 128 366 130L350 134C366 138 384 142 384 152C384 166 362 172 340 168C326 166 316 162 306 160C276 162 262 172 230 174C170 180 110 184 30 186Z" fill="#A84A5C" fill-opacity=".28" stroke="none"/><g transform="translate(110 236) rotate(-70)"><rect x="-7" y="-50" width="14" height="92" rx="7" fill="#DCC7AC" stroke="#6B1E2E" stroke-width="2"/><path d="M-7 -30h14v-13a7 7 0 0 0-14 0Z" fill="#8E2F42" opacity=".8"/></g></g>
+</svg>

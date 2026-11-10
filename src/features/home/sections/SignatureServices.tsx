@@ -12,8 +12,8 @@ import { useLocalePath } from '@/hooks/useLocalePath'
 import { fadeUp, stagger } from '@/lib/motion'
 
 /**
- * Category showcase. Real services (price in DZD, duration, image) are loaded
- * from Supabase from Phase 03 — nothing is invented here.
+ * Category showcase with the salon's illustrations. Prices and durations live
+ * in the database and are shown in the booking flow.
  */
 export function SignatureServices() {
   const { t } = useTranslation()
@@ -35,12 +35,12 @@ export function SignatureServices() {
           viewport={{ once: true, amount: 0.15 }}
           variants={stagger(0.12)}
         >
-          {SIGNATURE_CATEGORIES.map((key, i) => (
+          {SIGNATURE_CATEGORIES.map(({ key, image }, i) => (
             <motion.li key={key} variants={fadeUp} className={i % 2 === 1 ? 'lg:mt-16' : undefined}>
-              <Link to={to('services')} className="group flex flex-col gap-5">
+              <Link to={to('booking')} className="group flex flex-col gap-5">
                 <div className="overflow-hidden rounded-frame">
                   <div className="transition-transform duration-[1.2s] ease-luxe group-hover:scale-[1.04]">
-                    <ImageFrame shape="portrait" variant={i} reveal={false} />
+                    <ImageFrame src={image} shape="portrait" variant={i} reveal={false} />
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -50,8 +50,8 @@ export function SignatureServices() {
                       {t(`services.categories.${key}`)}
                     </h3>
                   </div>
-                  <Badge tone="muted" className="self-start">
-                    {t('placeholder.priceComing')}
+                  <Badge tone="gold" className="self-start">
+                    {t('actions.book')}
                   </Badge>
                 </div>
               </Link>

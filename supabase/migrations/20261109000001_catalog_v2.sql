@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — catalogue v2 (November 2026 price list)
+-- FJ GLOW — catalogue v2 (November 2026 price list)
 -- * New categories: make-up and hair styling.
 -- * services.price_mode: 'fixed' (default), 'from' ("à partir de": the amount
 --   is a minimum, final price set at the salon) or 'quote' ("sur devis":

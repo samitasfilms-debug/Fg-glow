@@ -5,7 +5,7 @@
 // runs under the same role (anon / authenticated) and auth.uid() as in
 // Supabase, so RLS, grants and SECURITY DEFINER behave like production.
 //
-//   node e2e/server.mjs --port 4400 --dist dist-e2e --db fgg_e2e
+//   node e2e/server.mjs --port 4400 --dist dist-e2e --db fjg_e2e
 import { createServer } from 'node:http'
 import { readFile, stat } from 'node:fs/promises'
 import { extname, join, normalize } from 'node:path'
@@ -20,7 +20,7 @@ const DIST = arg('dist', 'dist-e2e')
 // Same JSON shapes as PostgREST: dates stay "YYYY-MM-DD", instants are ISO strings.
 pg.types.setTypeParser(1082, (v) => v)
 pg.types.setTypeParser(1184, (v) => new Date(v).toISOString())
-const pool = new pg.Pool({ database: arg('db', 'fgg_e2e') })
+const pool = new pg.Pool({ database: arg('db', 'fjg_e2e') })
 
 // Fictitious test accounts (exist only in the throwaway test database).
 const ACCOUNTS = {

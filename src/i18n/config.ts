@@ -2,7 +2,7 @@ export const LOCALES = ['fr', 'ar'] as const
 export type Locale = (typeof LOCALES)[number]
 
 export const DEFAULT_LOCALE: Locale = 'fr'
-export const LOCALE_STORAGE_KEY = 'fg-glow.locale'
+export const LOCALE_STORAGE_KEY = 'fj-glow.locale'
 
 export const LOCALE_META: Record<Locale, { dir: 'ltr' | 'rtl'; htmlLang: string; label: string; short: string }> = {
   fr: { dir: 'ltr', htmlLang: 'fr', label: 'Français', short: 'FR' },

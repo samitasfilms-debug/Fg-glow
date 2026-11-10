@@ -1,5 +1,5 @@
 // Generates one original line-art illustration per service (public/prestations/<slug>.svg),
-// in the FG GLOW burgundy & beige palette. Pure vector artwork made for the site:
+// in the FJ GLOW burgundy & beige palette. Pure vector artwork made for the site:
 // no photos, no people's likeness.   node scripts/catalog/gen-images.mjs
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { SERVICES } from './data.mjs'

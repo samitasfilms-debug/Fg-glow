@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — salon set-up from the admin dashboard
+-- FJ GLOW — salon set-up from the admin dashboard
 -- Services, closures and settings are edited with plain table writes (RLS
 -- already restricts them to salon admins). Two operations need to be atomic or
 -- guarded, so they go through SECURITY DEFINER functions:

@@ -1,4 +1,4 @@
-// FG GLOW — salon price list of 9 Nov 2026 (provided by the salon).
+// FJ GLOW — salon price list of 9 Nov 2026 (provided by the salon).
 // Prices are the salon's. Durations are estimates to be checked by the salon
 // (editable in /admin/prestations). price_mode: fixed | from ("à partir de") | quote ("sur devis").
 // `match` lists the current production names of a service, so it is updated in place.

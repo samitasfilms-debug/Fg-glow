@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — booking core schema
+-- FJ GLOW — booking core schema
 -- Tables, constraints, indexes, Row Level Security.
 -- Business values (hours, prices, durations…) are NOT seeded: the salon enters
 -- them in the admin dashboard. Online booking stays disabled until then.

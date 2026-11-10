@@ -1,4 +1,4 @@
-// FG GLOW — WhatsApp Cloud API dispatcher (Supabase Edge Function, Deno).
+// FJ GLOW — WhatsApp Cloud API dispatcher (Supabase Edge Function, Deno).
 //
 // STATUS: written, NOT deployed and NOT tested against Meta (no credentials
 // exist yet). Nothing in the app depends on it: while it is not deployed and
@@ -13,7 +13,7 @@
 // Secrets (set with `supabase secrets set …`, never in the frontend):
 //   WHATSAPP_ACCESS_TOKEN       permanent System User token (Meta Business)
 //   WHATSAPP_PHONE_NUMBER_ID    sender phone number id
-//   WHATSAPP_TEMPLATE_PREFIX    optional, default "fg_glow_"  → e.g. fg_glow_booking_confirmed
+//   WHATSAPP_TEMPLATE_PREFIX    optional, default "fj_glow_"  → e.g. fj_glow_booking_confirmed
 //   DISPATCH_SECRET             random string the cron job sends as Bearer token
 // Provided automatically by Supabase: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
   const token = Deno.env.get('WHATSAPP_ACCESS_TOKEN')
   const phoneId = Deno.env.get('WHATSAPP_PHONE_NUMBER_ID')
   if (!token || !phoneId) return json(503, { error: 'whatsapp_not_configured', sent: 0 })
-  const prefix = Deno.env.get('WHATSAPP_TEMPLATE_PREFIX') ?? 'fg_glow_'
+  const prefix = Deno.env.get('WHATSAPP_TEMPLATE_PREFIX') ?? 'fj_glow_'
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } })
 

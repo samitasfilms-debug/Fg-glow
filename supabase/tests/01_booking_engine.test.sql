@@ -75,7 +75,7 @@ insert into t_res select public.create_booking_request(jsonb_build_object(
   'full_name', 'Amel Test', 'phone', '0555 00 00 01', 'email', 'amel@test.local', 'notes', 'Test',
   'locale', 'ar', 'service_ids', jsonb_build_array('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222'),
   'starts_at', ((select d from t_ctx) + time '10:00') at time zone 'Africa/Algiers'));
-select pg_temp.ok((select r ->> 'reference' ~ '^FG-[0-9]{6}-[A-Z0-9]{4}$' from t_res), 'reference generated');
+select pg_temp.ok((select r ->> 'reference' ~ '^FJ-[0-9]{6}-[A-Z0-9]{4}$' from t_res), 'reference generated');
 select pg_temp.ok((select r ->> 'status' = 'pending' from t_res), 'status pending');
 select pg_temp.ok((select (r ->> 'total_price_dzd')::int = 3500 and (r ->> 'total_duration_minutes')::int = 90 from t_res), 'totals from database (3500 DZD, 90 min)');
 
@@ -155,9 +155,9 @@ select pg_temp.ok((select count(*) from public.get_available_slots((select d + 3
 select pg_temp.ok((select count(*) from public.get_available_slots((select d + 3 from t_ctx), array['11111111-1111-1111-1111-111111111111']::uuid[], '44444444-4444-4444-4444-444444444444')) = 17, 'staff mode: professional slots');
 reset role;
 insert into public.appointments (reference, customer_id, staff_id, starts_at, ends_at, blocked_until, status, total_price_dzd, total_duration_minutes)
-select 'FG-000000-AAAA', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days', now() + interval '10 days 1 hour', now() + interval '10 days 1 hour', 'confirmed', 0, 60 from public.customers limit 1;
+select 'FJ-000000-AAAA', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days', now() + interval '10 days 1 hour', now() + interval '10 days 1 hour', 'confirmed', 0, 60 from public.customers limit 1;
 select pg_temp.expect_error($$insert into public.appointments (reference, customer_id, staff_id, starts_at, ends_at, blocked_until, status, total_price_dzd, total_duration_minutes)
-  select 'FG-000000-BBBB', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days 30 minutes', now() + interval '10 days 90 minutes', now() + interval '10 days 90 minutes', 'confirmed', 0, 60 from public.customers limit 1$$, 'appointments_no_staff_overlap');
+  select 'FJ-000000-BBBB', id, '44444444-4444-4444-4444-444444444444', now() + interval '10 days 30 minutes', now() + interval '10 days 90 minutes', now() + interval '10 days 90 minutes', 'confirmed', 0, 60 from public.customers limit 1$$, 'appointments_no_staff_overlap');
 select pg_temp.ok(true, 'exclusion constraint blocks overlapping confirmed appointments for one professional');
 
 -- 12. Rate limit -----------------------------------------------------------------
@@ -187,7 +187,7 @@ select pg_temp.ok((public.admin_list_appointments() ->> 'total')::int >= 5, 'adm
 select pg_temp.ok((public.admin_list_appointments(array['confirmed']::public.appointment_status[]) -> 'items' -> 0 ->> 'status') = 'confirmed', 'status filter');
 select pg_temp.ok((public.admin_list_appointments(null, null, null, '0555 00 00 01') -> 'items' -> 0 ->> 'customer_phone') = '+213555000001', 'search by phone');
 select pg_temp.ok((public.admin_list_appointments(null, null, null, 'amel') -> 'items' -> 0 ->> 'customer_name') = 'Amel Test', 'search by name');
-select pg_temp.ok(jsonb_array_length(public.admin_get_appointment((select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001' and a.reference <> 'FG-000000-AAAA')) -> 'events') = 3, 'detail includes history');
+select pg_temp.ok(jsonb_array_length(public.admin_get_appointment((select a.id from public.appointments a join public.customers c on c.id = a.customer_id where c.phone = '+213555000001' and a.reference <> 'FJ-000000-AAAA')) -> 'events') = 3, 'detail includes history');
 select pg_temp.ok((public.get_my_profile() ->> 'role') = 'super_admin', 'own profile');
 reset role;
 

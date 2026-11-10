@@ -1,5 +1,5 @@
 -- =============================================================================
--- FG GLOW — availability engine, public booking endpoint, admin actions
+-- FJ GLOW — availability engine, public booking endpoint, admin actions
 --
 -- SLOT POLICY
 --   * A slot is offered only inside salon opening hours (working_hours with

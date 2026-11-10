@@ -1,5 +1,5 @@
 /**
- * FG GLOW — static brand configuration.
+ * FJ GLOW — static brand configuration.
  *
  * IMPORTANT: real business information (address, phone, hours, prices, team…)
  * has NOT been provided yet. Every unknown value is `null` and the UI renders a
@@ -30,7 +30,7 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  name: 'FG GLOW',
+  name: 'FJ GLOW',
   // The official slogans are in English and are kept as-is in both languages.
   // The Arabic site also shows a translation (see i18n key `brand.sloganTranslation`).
   slogan: {

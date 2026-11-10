@@ -3,10 +3,10 @@ import type { Translation } from './fr'
 /** Arabic translations (RTL). Typed against the French file for key parity. */
 const ar: Translation = {
   meta: {
-    defaultTitle: 'FG GLOW — صالون تصفيف الشعر للنساء',
-    titleTemplate: '{{page}} · FG GLOW',
+    defaultTitle: 'FJ GLOW — صالون تصفيف الشعر للنساء',
+    titleTemplate: '{{page}} · FJ GLOW',
     description:
-      'FG GLOW، صالون تصفيف شعر راقٍ مخصّص للنساء. قصّ، صبغ، بالاياج، علاجات وتسريحات مميّزة. احجزي موعدك عبر الإنترنت.',
+      'FJ GLOW، صالون تصفيف شعر راقٍ مخصّص للنساء. قصّ، صبغ، بالاياج، علاجات وتسريحات مميّزة. احجزي موعدك عبر الإنترنت.',
   },
   brand: {
     sloganTranslation: 'جمالكِ، لحظتكِ.',
@@ -15,7 +15,7 @@ const ar: Translation = {
     skipToContent: 'الانتقال إلى المحتوى الرئيسي',
     mainNav: 'التنقّل الرئيسي',
     footerNav: 'روابط أسفل الصفحة',
-    homeLink: 'FG GLOW — الصفحة الرئيسية',
+    homeLink: 'FJ GLOW — الصفحة الرئيسية',
     language: 'اللغة',
   },
   nav: {
@@ -69,7 +69,7 @@ const ar: Translation = {
       eyebrow: 'عالمنا',
       title: 'لحظة خاصة بكِ وحدكِ',
       body:
-        'في FG GLOW، تصفيف الشعر فنّ قائم على الاهتمام. نأخذ وقتنا للإصغاء إليكِ وفهم أسلوبكِ، لنصنع جمالًا يشبهكِ.',
+        'في FJ GLOW، تصفيف الشعر فنّ قائم على الاهتمام. نأخذ وقتنا للإصغاء إليكِ وفهم أسلوبكِ، لنصنع جمالًا يشبهكِ.',
       quote: 'جمال. أناقة. ثقة.',
     },
     signature: {
@@ -78,7 +78,7 @@ const ar: Translation = {
       body: 'اكتشفي عوالم خدماتنا. تظهر الأسعار والمدد عند الحجز.',
     },
     why: {
-      eyebrow: 'تجربة FG GLOW',
+      eyebrow: 'تجربة FJ GLOW',
       title: 'لماذا تختاريننا',
       items: {
         listen: {
@@ -140,13 +140,13 @@ const ar: Translation = {
     explore: 'استكشفي',
     visit: 'زورينا',
     follow: 'تابعينا',
-    rights: '© {{year}} FG GLOW. جميع الحقوق محفوظة.',
+    rights: '© {{year}} FJ GLOW. جميع الحقوق محفوظة.',
     onSitePayment: 'الدفع في الصالون فقط',
   },
   pages: {
     about: {
       title: 'من نحن',
-      intro: 'قصة FG GLOW وفلسفتها وعالمها.',
+      intro: 'قصة FJ GLOW وفلسفتها وعالمها.',
     },
     services: {
       title: 'خدماتنا',
@@ -154,7 +154,7 @@ const ar: Translation = {
     },
     gallery: {
       title: 'المعرض',
-      intro: 'تحوّلات وألوان وتسريحات بتوقيع FG GLOW.',
+      intro: 'تحوّلات وألوان وتسريحات بتوقيع FJ GLOW.',
     },
     team: {
       title: 'فريقنا',
@@ -269,7 +269,7 @@ const ar: Translation = {
       time: 'الوقت',
       payment: 'الدفع',
       paymentOnSite: 'في الصالون مباشرة. لا يوجد دفع عبر الإنترنت.',
-      pendingNotice: 'سيقوم الصالون بدراسة طلبكِ. لا يُعتبر الموعد مؤكَّدًا إلا بعد موافقة FG GLOW.',
+      pendingNotice: 'سيقوم الصالون بدراسة طلبكِ. لا يُعتبر الموعد مؤكَّدًا إلا بعد موافقة FJ GLOW.',
     },
     success: {
       title: 'تم إرسال الطلب',
@@ -325,7 +325,7 @@ const ar: Translation = {
     },
     login: {
       title: 'تسجيل الدخول',
-      subtitle: 'الدخول مخصّص لفريق FG GLOW.',
+      subtitle: 'الدخول مخصّص لفريق FJ GLOW.',
       email: 'البريد الإلكتروني',
       password: 'كلمة المرور',
       submit: 'دخول',
@@ -507,14 +507,14 @@ const ar: Translation = {
     },
   },
   whatsappMessages: {
-    booking_confirmed: 'مرحبًا {{name}}، تم تأكيد موعدكِ في FG GLOW يوم {{date}} على الساعة {{time}} (المرجع {{reference}}). نراكِ قريبًا!',
+    booking_confirmed: 'مرحبًا {{name}}، تم تأكيد موعدكِ في FJ GLOW يوم {{date}} على الساعة {{time}} (المرجع {{reference}}). نراكِ قريبًا!',
     booking_rejected:
       'مرحبًا {{name}}، نعتذر: لا يمكننا قبول طلبكِ ليوم {{date}} على الساعة {{time}} (المرجع {{reference}}). يسعدنا أن تختاري موعدًا آخر.',
     reschedule_proposed:
       'مرحبًا {{name}}، الموعد المطلوب غير متاح. نقترح عليكِ يوم {{date}} على الساعة {{time}} (المرجع {{reference}}). هل يناسبكِ هذا الموعد؟',
     booking_cancelled:
       'مرحبًا {{name}}، تم إلغاء موعدكِ ليوم {{date}} على الساعة {{time}} (المرجع {{reference}}). تواصلي معنا لتحديد موعد جديد.',
-    booking_created: 'طلب جديد FG GLOW: {{name}}، يوم {{date}} على الساعة {{time}} (المرجع {{reference}}).',
+    booking_created: 'طلب جديد FJ GLOW: {{name}}، يوم {{date}} على الساعة {{time}} (المرجع {{reference}}).',
   },
   validation: {
     required: 'هذا الحقل إلزامي.',

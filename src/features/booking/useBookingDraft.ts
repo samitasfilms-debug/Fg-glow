@@ -13,7 +13,7 @@ export interface BookingDraft {
   customer: { fullName: string; phone: string; email: string; notes: string }
 }
 
-const KEY = 'fg-glow.booking-draft.v1'
+const KEY = 'fj-glow.booking-draft.v1'
 
 export const emptyDraft: BookingDraft = {
   step: 0,

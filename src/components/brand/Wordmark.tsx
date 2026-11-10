@@ -1,5 +1,6 @@
 import { site } from '@/config/site'
 import { cn } from '@/lib/cn'
+import { ScriptMonogram } from './ScriptMonogram'
 
 interface WordmarkProps {
   className?: string
@@ -15,7 +16,7 @@ const sizes = {
 }
 
 /**
- * Temporary typographic logo. When an official logo is provided, set
+ * Typographic logo: calligraphic "FJ" monogram + "GLOW" in the display serif. When an official logo is provided, set
  * `site.logoUrl` (or replace this component) — every usage updates at once.
  * The wordmark is Latin, so it keeps Cormorant Garamond even in Arabic pages.
  */
@@ -35,7 +36,9 @@ export function Wordmark({ className, size = 'md', tone = 'dark' }: WordmarkProp
       )}
       style={{ fontFamily: 'var(--font-display)' }}
     >
-      <span className="font-semibold tracking-[0.06em]">FJ</span>
+      <span className="sr-only">FJ</span>
+      {/* 1.5 × the script's 1em; shifted down by its descent so FJ and GLOW share a baseline */}
+      <ScriptMonogram className="relative top-[0.35em] h-[1.25em] w-auto shrink-0" />
       <span aria-hidden className="relative -top-[0.32em] size-[0.16em] shrink-0 rotate-45 bg-gold" />
       <span className="font-light tracking-[var(--tracking-wordmark)]">GLOW</span>
     </span>

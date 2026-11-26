@@ -14,6 +14,7 @@ import { useLocale } from '@/i18n/locale-context'
 import { salonToday } from '@/lib/datetime'
 import { EASE_LUXE } from '@/lib/motion'
 import { supabase } from '@/lib/supabase'
+import { trackEvent } from '@/lib/meta-pixel'
 import { BookingError, bookingApi, type BookingResult, type BookingStatus, type CatalogService, type CatalogStaff } from './api'
 import { SelectionSummary } from './components/SelectionSummary'
 import { Stepper } from './components/Stepper'
@@ -158,6 +159,9 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
 
   const goTo = (step: number) => {
     setError(null)
+    if (draft.step === 0 && step === 1) {
+      trackEvent('InitiateCheckout', { content_ids: selected.map((s) => s.id), num_items: selected.length })
+    }
     update({ step })
     requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
   }
@@ -183,6 +187,16 @@ function BookingFlow({ booking, services, staff, onCatalogStale }: FlowProps) {
         staff_id: draft.staffId,
         starts_at: draft.slot,
       })
+      // Ads measurement: no customer data is sent, only what was booked.
+      const conversion = {
+        content_ids: selected.map((s) => s.id),
+        content_name: selected.map((s) => s.name_fr).join(', '),
+        num_items: selected.length,
+        currency: 'DZD',
+        value: result.total_price_dzd,
+      }
+      trackEvent('Schedule', conversion, `schedule-${result.reference}`)
+      trackEvent('Lead', conversion, `lead-${result.reference}`)
       setDone({ result, name: draft.customer.fullName.trim(), phone: draft.customer.phone.trim(), priceIsMinimum, hasQuote })
       reset()
       requestAnimationFrame(() => {

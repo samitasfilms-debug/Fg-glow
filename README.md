@@ -66,6 +66,15 @@ Set `logoUrl` in `src/config/site.ts` (or edit `components/brand/Wordmark.tsx`).
 See `.env.example`. Only `VITE_*` values reach the browser. The Supabase service role key and
 WhatsApp credentials must only ever be stored as Supabase Edge Function secrets.
 
+## Meta Pixel (Meta Ads)
+Set `VITE_META_PIXEL_ID` (digits from Meta Events Manager) in Vercel > Settings > Environment
+Variables, then redeploy. Empty = Pixel disabled, nothing loaded. Code: `src/lib/meta-pixel.ts`.
+Events sent (public pages only, never `/admin`, never customer name/phone/email):
+- `PageView` on every route change
+- `InitiateCheckout` when the visitor leaves the services step of the booking
+- `Schedule` + `Lead` when a booking request is created (value = total in DZD, eventID = booking reference)
+- `Contact` on clicks on phone (`tel:`), WhatsApp (`wa.me`) and e-mail links
+
 ## Next phases
 - 02 Public pages (About, Services, Gallery + lightbox, Team, Contact form), sitemap, OG image
 - 03 Booking flow + availability engine ✅ (docs/BOOKING.md)

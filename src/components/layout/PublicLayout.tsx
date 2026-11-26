@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useOutlet } from 'react-router-dom'
+import { MetaPixelTracker } from '@/app/MetaPixelTracker'
 import { pageTransition } from '@/lib/motion'
 import { Footer } from './Footer'
 import { Header } from './Header'
@@ -20,6 +21,7 @@ export function PublicLayout() {
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <MetaPixelTracker />
       <a
         href="#main"
         className="fixed start-4 top-4 z-50 -translate-y-24 rounded-full bg-cocoa px-5 py-3 text-sm text-ivory transition-transform focus:translate-y-0"
